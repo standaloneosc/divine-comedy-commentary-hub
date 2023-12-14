@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { auth } from '../../App'
+import { auth, db } from '../../App'
 import BaseLayout from '../../Layouts/BaseLayout'
 import { Navigate } from 'react-router-dom'
 import { Container, Error, Input, LoginBox, SwitchLoginSignup } from './styles'
 import Button from '../../Components/Button'
 import Spacer from '../../Components/Spacer'
 import { AUTH_ERROR_CODES } from '../../Utils/constants'
+import { ref, set } from 'firebase/database'
 
 const Auth = () => {
   const [user, userLoading, userError] = useAuthState(auth)
@@ -40,7 +41,7 @@ const Auth = () => {
       })
   }
 
-  const signup = () => {
+  const signup = async () => {
     if (!name || name.split(" ").length < 2) {
       setSignupError(AUTH_ERROR_CODES["auth/missing-name"])
       return
@@ -57,25 +58,25 @@ const Auth = () => {
     }
 
     setSignupLoading(true)
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(user => {
-        updateProfile(
-          user.user,
-          { displayName: name }
-        ).then(() => {
-            setSignupLoading(false)
-            setSignupError("")
-        }).catch(err => {
-            setSignupLoading(false)
-            setSignupError("An error occurred setting your name.")
-            console.log("Error setting displayname:", err)
-        })
-      })
-      .catch(err => {
-        console.log('error:', err)
-        setSignupLoading(false)
-        setSignupError(getErrorCode(err.code))
-      })
+
+    try {
+      const user = await createUserWithEmailAndPassword(auth, email, password)
+      await updateProfile(user.user, { displayName: name })
+      const userData = {
+        name,
+        email,
+        class: null,
+      }
+      await set(ref(db, `users/${user.user.uid}`), userData)
+
+    } catch (err) {
+      console.log("Error signing up", err)
+      setSignupLoading(false)
+      setSignupError("An error occurred setting your name.")
+    } finally {
+      setSignupLoading(false)
+      setSignupError("")
+    }
   }
 
   const switchLoginSignup = () => {

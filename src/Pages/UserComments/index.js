@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate, Navigate, useParams } from 'react-router-dom'
+import { child, get, onValue, ref } from 'firebase/database'
 
 import { auth, db } from '../../App'
 
 import BaseLayout from '../../Layouts/BaseLayout/index'
 
 import { Container, Header } from './styles'
-import { onValue, ref } from 'firebase/database'
 import ViewCommentModal from '../../Components/ViewCommentModal'
 import Spacer from '../../Components/Spacer'
 import Button from '../../Components/Button'
 import { BiHome } from 'react-icons/bi'
 
 const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserSaves }) => {  
-  const { otherUserId, otherUserName } = useParams()
-
-  const [user, userLoading, userError] = useAuthState(auth)
+  const { otherUserId } = useParams()
   const navigate = useNavigate()
 
+  const [user, userLoading, userError] = useAuthState(auth)
+
   const [userComments, setUserComments] = useState(null)
+  const [otherUserData, setOtherUserData] = useState(null)
+  const [otherUserLoading, setOtherUserLoading] = useState(!!otherUserId)
   
   useEffect(() => {
     if (!user) return
@@ -30,7 +32,7 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
       if (snapshot.exists()) {
         const comments = snapshot.val()
         Object.keys(comments).forEach(k => {
-          if (!comments[k]["private"] && comments[k]["user"] !== user.uid) {
+          if (comments[k]["private"] && comments[k]["user"] !== user.uid) {
             delete comments[k]
           }
         })
@@ -40,7 +42,22 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
 
   }, [user, otherUserId])
 
-  if (userLoading) {
+  useEffect(() => {
+    if (!otherUserId) return
+
+    get(child(ref(db), `users/${otherUserId}`))
+      .then(snapshot => {
+        if (snapshot.exists()) {
+          setOtherUserData(snapshot.val())
+          setOtherUserLoading(false)
+        }
+      })
+      .catch(err => {
+        console.log("Error getting other user data:", err)
+      })
+  }, [otherUserId])
+
+  if (userLoading || otherUserLoading) {
     return (
       <BaseLayout>
         <p>Loading...</p>
@@ -64,8 +81,9 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
     return <Navigate to="/auth" />
   }
 
-  const pageTitle = otherUserName ? `${otherUserName}'s Comments` : 'My Comments'
-  const emptyMessage = otherUserName 
+  const otherUserName = otherUserData ? otherUserData["name"] : "Dantista Anonimo"
+  const pageTitle = otherUserData ? `${otherUserName}'s Comments` : 'My Comments'
+  const emptyMessage = otherUserId 
     ? `${otherUserName.split(" ")[0]} hasn't written any comments yet.`
     : 'You have not written any comments. Write your first one!'
 
@@ -79,7 +97,7 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
         </Header>
         {userComments && Object.keys(userComments).length > 0
         ? Object.keys(userComments).map(k => (
-          <>
+          <div key={`comment-${k}`}>
             <ViewCommentModal
               comment={userComments[k]}
               commentKey={k}
@@ -88,7 +106,7 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
               commentsPage
             />
             <Spacer height="24px" />
-          </>
+          </div>
         ))
         : <>{emptyMessage}</>
         }

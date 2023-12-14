@@ -164,7 +164,6 @@ const App = () => {
             })
           }
         }
-        console.log(commedia)
         setCommediaData(commedia)
       })
       .catch((error) => {
@@ -195,7 +194,7 @@ const App = () => {
             element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
           />
           <Route
-            path="/user/:otherUserId/:otherUserName"
+            path="/user/:otherUserId"
             element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
           />
           <Route

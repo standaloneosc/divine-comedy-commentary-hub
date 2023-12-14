@@ -77,7 +77,7 @@ const  ViewCommentModal = ({
     if (comment["user"] === user.uid) {
       navigate("/comments")
     } else {
-      navigate(`/user/${comment["user"]}/${nameOrYou}`)
+      navigate(`/user/${comment["user"]}`)
     }
   }
 
