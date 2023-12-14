@@ -73,6 +73,8 @@ const  ViewCommentModal = ({
     }
   }
 
+  let commentParagraphs = comment["comment"]?.split("\\n") || [comment["comment"]]
+
   return (
     <Container commentsPage={commentsPage}>
       <div className="header">
@@ -97,7 +99,7 @@ const  ViewCommentModal = ({
       </div>
       <div className="comment">
         <div className="name">{`${nameOrYou} commented`}</div>
-        {comment["comment"]}
+        {commentParagraphs.map(c => <p>{c}</p>)}
       </div>
       <div className="actions">
         <div className="action" onClick={toggleUpvote}>

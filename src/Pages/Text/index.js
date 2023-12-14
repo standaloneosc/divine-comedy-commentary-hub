@@ -112,14 +112,14 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   }
 
   const deleteRange = rangeIdx => {
-    removeHighlightingFromRange(rangeIdx, highlightedRanges)
+    removeHighlightingFromRange(rangeIdx, highlightedRanges, HIGHLIGHTED_CLASS)
 
     const newRanges = [...highlightedRanges]
     newRanges.splice(rangeIdx, 1)
     setHighlightedRanges(newRanges)
   }
 
-  const removeHighlightingFromRange = (rangeIdx, ranges) => {
+  const removeHighlightingFromRange = (rangeIdx, ranges, classToRemove=HIGHLIGHTED_CLASS) => {
     const r = ranges[rangeIdx]
 
     if (r["canto"] !== canto["number"]) return
@@ -142,24 +142,16 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
         const el = document.getElementById(getWordId(r["part"], r["canto"], line, word))
         if (!el) continue
 
-        if (el.classList.contains(HIGHLIGHTED_CLASS)) {
-          el.classList.remove(HIGHLIGHTED_CLASS);
+        if (el.classList.contains(classToRemove)) {
+          el.classList.remove(classToRemove)
         }
-
-        if (el.classList.contains(HOVER_HIGHLIGHTED_CLASS)) {
-          el.classList.remove(HOVER_HIGHLIGHTED_CLASS);
-        }
-
-        if (el.classList.contains(VIEWING_HIGHLIGHTED_CLASS)) {
-          el.classList.remove(VIEWING_HIGHLIGHTED_CLASS);
-        } 
       }
     }
   }
 
   const cancelHighlighting = () => {
     for (let i = 0; i < highlightedRanges.length; i++) {
-      removeHighlightingFromRange(i, highlightedRanges)
+      removeHighlightingFromRange(i, highlightedRanges, HIGHLIGHTED_CLASS)
     }
 
     setHighlightedRanges([])
@@ -168,7 +160,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
 
   const unhoverHighlighting = () => {
     for (let i = 0; i < hoverRanges.length; i++) {
-      removeHighlightingFromRange(i, hoverRanges)
+      removeHighlightingFromRange(i, hoverRanges, HOVER_HIGHLIGHTED_CLASS)
     }
 
     setHoverRanges([])
@@ -177,7 +169,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   const unhighlightViewedComment = () => {
     if (!viewingComment) return
     for (let i = 0; i < viewingComment["ranges"].length; i++) {
-      removeHighlightingFromRange(i, viewingComment["ranges"])
+      removeHighlightingFromRange(i, viewingComment["ranges"], VIEWING_HIGHLIGHTED_CLASS)
     }
 
     setViewingCommentKey(null)

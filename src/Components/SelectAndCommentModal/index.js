@@ -39,15 +39,28 @@ const SelectAndCommentModal = ({
     setIsCommenting(true)
   }
 
+  if (comment) {
+    const split = comment.split('\n')
+    if (split?.length) {
+      console.log(split.join("\\n"))
+    }
+  }
+
   const submitComment = () => {
     if (!highlightedRanges.length || !comment) return
     setSubmitLoading(true)
+
+    let commentWithNewlines = comment
+    const split = comment.split('\n')
+    if (split?.length) {
+      commentWithNewlines = split.join("\\n")
+    }
 
     const commentData = {
       user: user.uid,
       name: user.displayName,
       ranges: highlightedRanges,
-      comment,
+      comment: commentWithNewlines,
       upvotes: 0,
       createdAt: serverTimestamp(),
       private: isPrivate,
