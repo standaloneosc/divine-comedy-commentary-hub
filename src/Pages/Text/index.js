@@ -307,7 +307,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
             </CommentBubble>
           </>
         ))}
-        {viewingCommentLine === lineNum && (
+        {(viewingCommentLine === lineNum && viewingComment) && (
           <div className="viewCommentModal">
             <ViewCommentModal
               comment={viewingComment}
