@@ -15,8 +15,6 @@ const  ViewCommentModal = ({
   userUpvotes, userSaves,
   commentsPage,
 }) => {
-  console.log('view comment modal', comment)
-
   const [user] = useAuthState(auth)
   const navigate = useNavigate()
 
@@ -26,7 +24,7 @@ const  ViewCommentModal = ({
   const createdAt = comment["createdAt"] ? new Date(comment["createdAt"]) : new Date()
   const createdAtDate = format(createdAt, 'MM/dd/yy')
   const upvotes = comment["upvotes"] || 0
-  const nameOrYou = comment["user"] === user.uid ? "You" : comment["name"]
+  const nameOrYou = comment["user"] === user.uid ? "You" : comment["name"] || "Dantista Anonimo"
 
   const toggleUpvote = () => {
     set(ref(db, `user-upvotes/${user.uid}/${commentKey}`), !hasUpvoted)
@@ -67,6 +65,14 @@ const  ViewCommentModal = ({
       })
   }
 
+  const clickCommentRange = (part, canto, startLine, startWord) => {
+    const id = getWordId(part, canto, startLine, startWord)
+    navigate(`/${part}/${canto}#${id}`)
+    if (document.getElementById(id)) {
+      document.getElementById(id).scrollIntoView()
+    }
+  }
+
   return (
     <Container commentsPage={commentsPage}>
       <div className="header">
@@ -77,7 +83,7 @@ const  ViewCommentModal = ({
             const comma = idx < comment["ranges"].length - 1? "," : ""
 
             return (
-              <span onClick={() => navigate(`/${part}/${canto}#${getWordId(part, canto, startLine, startWord)}`)}>
+              <span onClick={() => clickCommentRange(part, canto, startLine, startWord)}>
                 {`${PART_ABBREVIATIONS[part]} ${canto}.${lines}${comma}`}
               </span>
             )

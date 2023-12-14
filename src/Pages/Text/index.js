@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import _ from 'underscore'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { ref, onValue } from "firebase/database"
@@ -21,6 +21,7 @@ import { highlightRanges } from '../../Utils/highlightRanges'
 const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   const [user, userLoading, userError] = useAuthState(auth)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isCommenting, setIsCommenting] = useState(false)
@@ -39,6 +40,18 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
 
   const { canto: cantoParam } = useParams()
   // console.log(`Canto: ${part} ${cantoParam}`)
+
+  // Scroll to proper place!
+  useEffect(() => {
+    if (!location.hash || !canto) return
+    console.log('scroll use effect!', location.hash)
+    const id = location.hash.slice(1)
+    const el = document.getElementById(id)
+
+    if (el) {
+      el.scrollIntoView()
+    }
+  }, [location, canto])
 
   // Set up data fetching
   useEffect(() => {
@@ -279,7 +292,10 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
 
     return (
       <CommentsHolder>
-        {comments.slice(0, 3).map(c => (
+        {comments
+          .sort((a, b) => b["upvotes"] - a["upvotes"])
+          .slice(0, 3)
+          .map(c => (
           <>
             <CommentBubble
               onMouseEnter={() => setHoverRanges(c["ranges"])}

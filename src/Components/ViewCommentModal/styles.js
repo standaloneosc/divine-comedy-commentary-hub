@@ -4,7 +4,7 @@ import { theme } from "../../theme"
 export const Container = styled.div`
   background: ${theme.colors.backgroundTan};
   border: 2px solid ${theme.colors.backgroundBrown};
-  width: 296px;
+  width: 324px;
   border-radius: 8px;
   box-shadow: 0 10px 15px rgba(50, 50, 50, 0.3);
   text-align: left;
@@ -25,7 +25,7 @@ export const Container = styled.div`
     font-size: 14px;
 
     .ranges {
-      flex: 1;
+      /* flex: 1; */
       display: flex;
       align-self: center;
       justify-content: flex-start;
@@ -43,7 +43,7 @@ export const Container = styled.div`
     }
 
     .right {
-      flex: 1;
+      /* flex: 1; */
       color: #f2b679;
       display: flex;
       align-items: center;
