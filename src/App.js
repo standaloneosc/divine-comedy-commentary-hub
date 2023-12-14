@@ -18,7 +18,7 @@ import comeddiaXML from "./commedia.xml"
 import { DATABASE_URL, PUNCTUATION } from './Utils/constants'
 import Auth from './Pages/Auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import MyComments from './Pages/MyComments'
+import UserComments from './Pages/UserComments'
 import MySaved from './Pages/MySaved'
 
 // var firebaseui = require('firebaseui')
@@ -192,7 +192,11 @@ const App = () => {
           <Route path="/auth" element={<Auth />} />
           <Route
             path="/comments"
-            element={<MyComments userUpvotes={userUpvotes} userSaves={userSaves} />}
+            element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
+          />
+          <Route
+            path="/user/:otherUserId/:otherUserName"
+            element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
           />
           <Route
             path="/saved"

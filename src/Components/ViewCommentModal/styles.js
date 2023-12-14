@@ -72,6 +72,13 @@ export const Container = styled.div`
     .name {
       margin-bottom: 8px;
       font-weight: bold;
+      
+      span {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
 }
 

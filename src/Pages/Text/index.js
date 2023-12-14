@@ -63,13 +63,17 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
     // Fetch comments for this canto
     const commentsRef = ref(db, `canto-comments/${part}/${cantoNum}`);
     return onValue(commentsRef, snapshot => {
-      const comments = snapshot.val()
       if (snapshot.exists()) {
+        let comments = snapshot.val()
+        Object.keys(comments).forEach(k => {
+          if (comments[k]["private"] && comments[k]["user"] !== user.uid) {
+            delete comments[k]
+          }
+        })
         setCantoComments(comments)
       }
-      
     });
-  }, [cantoParam, part])
+  }, [user, cantoParam, part])
 
   useEffect(() => {
     // console.log('use effect user highlighted:', highlightedRanges)

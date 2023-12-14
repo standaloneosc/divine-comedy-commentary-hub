@@ -73,6 +73,14 @@ const  ViewCommentModal = ({
     }
   }
 
+  const clickUsername = () => {
+    if (comment["user"] === user.uid) {
+      navigate("/comments")
+    } else {
+      navigate(`/user/${comment["user"]}/${nameOrYou}`)
+    }
+  }
+
   let commentParagraphs = comment["comment"]?.split("\\n") || [comment["comment"]]
 
   return (
@@ -98,7 +106,10 @@ const  ViewCommentModal = ({
         </div>
       </div>
       <div className="comment">
-        <div className="name">{`${nameOrYou} commented`}</div>
+        <div className="name">
+          <span onClick={clickUsername}>{nameOrYou}</span> 
+          {' '}commented
+        </div>
         {commentParagraphs.map(c => <p>{c}</p>)}
       </div>
       <div className="actions">

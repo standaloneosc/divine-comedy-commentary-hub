@@ -18,7 +18,7 @@ export const Header = styled.div`
 
   .button {
     display: flex;
-    flex: 1;
+    flex: 0.1;
     justify-content: flex-start;
   }
 
@@ -29,7 +29,7 @@ export const Header = styled.div`
   }
 
   .right {
-    flex: 1;
+    flex: 0.1;
     display: flex;
     justify-content: flex-end;
   }

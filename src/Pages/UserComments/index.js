@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, useParams } from 'react-router-dom'
 
 import { auth, db } from '../../App'
 
@@ -13,7 +13,9 @@ import Spacer from '../../Components/Spacer'
 import Button from '../../Components/Button'
 import { BiHome } from 'react-icons/bi'
 
-const MyComments = ({ userUpvotes, userSaves }) => {  
+const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserSaves }) => {  
+  const { otherUserId, otherUserName } = useParams()
+
   const [user, userLoading, userError] = useAuthState(auth)
   const navigate = useNavigate()
 
@@ -22,15 +24,21 @@ const MyComments = ({ userUpvotes, userSaves }) => {
   useEffect(() => {
     if (!user) return
 
-    const commentsRef = ref(db, `user-comments/${user.uid}`)
+    const uid = otherUserId || user.uid
+    const commentsRef = ref(db, `user-comments/${uid}`)
     return onValue(commentsRef, snapshot => {
-      const comments = snapshot.val()
       if (snapshot.exists()) {
+        const comments = snapshot.val()
+        Object.keys(comments).forEach(k => {
+          if (!comments[k]["private"] && comments[k]["user"] !== user.uid) {
+            delete comments[k]
+          }
+        })
         setUserComments(comments)
       }
     })
 
-  }, [user])
+  }, [user, otherUserId])
 
   if (userLoading) {
     return (
@@ -56,32 +64,37 @@ const MyComments = ({ userUpvotes, userSaves }) => {
     return <Navigate to="/auth" />
   }
 
+  const pageTitle = otherUserName ? `${otherUserName}'s Comments` : 'My Comments'
+  const emptyMessage = otherUserName 
+    ? `${otherUserName.split(" ")[0]} hasn't written any comments yet.`
+    : 'You have not written any comments. Write your first one!'
+
   return (
     <BaseLayout hideCantoNav>
       <Container>
         <Header>
           <div className="button"><Button onClick={() => navigate("/")} icon={<BiHome />} /></div>
-          <div className="title"><h2>My Comments</h2></div>
+          <div className="title"><h2>{pageTitle}</h2></div>
           <div className="right" />
         </Header>
-        {userComments
+        {userComments && Object.keys(userComments).length > 0
         ? Object.keys(userComments).map(k => (
           <>
             <ViewCommentModal
               comment={userComments[k]}
               commentKey={k}
-              userUpvotes={userUpvotes}
-              userSaves={userSaves}
+              userUpvotes={currentUserUpvotes}
+              userSaves={currentUserSaves}
               commentsPage
             />
             <Spacer height="24px" />
           </>
         ))
-        : <>You have not written any comments. Write your first one!</>
+        : <>{emptyMessage}</>
         }
       </Container>
     </BaseLayout>
   )
 }
 
-export default MyComments
+export default UserComments
