@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
-import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash } from "react-icons/bi"
+import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash, BiSolidEditAlt } from "react-icons/bi"
 import { useNavigate } from 'react-router-dom'
 
 import { Container } from './styles'
@@ -9,6 +9,8 @@ import { auth, db } from '../../App'
 import { getCommentUpdatesToMakeForRanges, getWordId } from '../../Utils/utility'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { PART_ABBREVIATIONS } from '../../Utils/constants'
+import Button from '../Button'
+import Spacer from '../Spacer'
 
 const  ViewCommentModal = ({
   comment, commentKey, close,
@@ -21,6 +23,10 @@ const  ViewCommentModal = ({
   const [hasUpvoted, setHasUpvoted] = useState(userUpvotes && commentKey in userUpvotes && userUpvotes[commentKey])
   const [hasSaved, setHasSaved] = useState(userSaves && commentKey in userSaves && userSaves[commentKey])
 
+  const [editing, setEditing] = useState(false)
+  const [editText, setEditText] = useState(comment["comment"])
+  const [editLoading, setEditLoading] = useState(false)
+
   const createdAt = comment["createdAt"] ? new Date(comment["createdAt"]) : new Date()
   const createdAtDate = format(createdAt, 'MM/dd/yy')
   const upvotes = comment["upvotes"] || 0
@@ -29,7 +35,6 @@ const  ViewCommentModal = ({
   const toggleUpvote = () => {
     set(ref(db, `user-upvotes/${user.uid}/${commentKey}`), !hasUpvoted)
 
-    console.log('toggle upvote for comment', commentKey)
     const key = `${commentKey}/upvotes`
     const newUpvotes = upvotes + (-2 * hasUpvoted + 1)
     const updates = getCommentUpdatesToMakeForRanges(key, comment["user"], comment["ranges"], newUpvotes)
@@ -44,7 +49,6 @@ const  ViewCommentModal = ({
   }
 
   const toggleSave = () => {
-    console.log('toggle save for comment', commentKey)
     set(ref(db, `user-saves/${user.uid}/${commentKey}`), !hasSaved)
       .then(() => {
         setHasSaved(!hasSaved)
@@ -55,7 +59,9 @@ const  ViewCommentModal = ({
   }
 
   const deleteComment = () => {
-    const updates = getCommentUpdatesToMakeForRanges(commentKey, comment["user"], comment["ranges"], null)
+    if (user.uid !== comment["user"]) return
+
+    const updates = getCommentUpdatesToMakeForRanges(commentKey, user.uid, comment["ranges"], null)
     update(ref(db), updates)
       .then(() => {
         if (close) close()
@@ -63,6 +69,28 @@ const  ViewCommentModal = ({
       .catch(err => {
         console.log("Error deleting post:", err)
       })
+  }
+
+  const editComment = async () => {
+    if (user.uid !== comment["user"]) return
+
+    setEditLoading(true)
+    const keyAndSubfield = `${commentKey}/comment`
+    const updates = getCommentUpdatesToMakeForRanges(keyAndSubfield, user.uid, comment["ranges"], editText)
+
+    try {
+
+    } catch (err) {
+      console.log("Error editing comment:", err)
+    }
+    await update(ref(db), updates)
+    setEditLoading(false)
+    setEditing(false)
+  }
+
+  const cancelEditing = () => {
+    setEditText(comment["comment"])
+    setEditing(false)
   }
 
   const clickCommentRange = (part, canto, startLine, startWord) => {
@@ -80,8 +108,6 @@ const  ViewCommentModal = ({
       navigate(`/user/${comment["user"]}`)
     }
   }
-
-  let commentParagraphs = comment["comment"]?.split("\\n") || [comment["comment"]]
 
   return (
     <Container commentsPage={commentsPage}>
@@ -102,7 +128,12 @@ const  ViewCommentModal = ({
         <div className="right">
           <span className="date">{createdAtDate}</span>
           {close && <BiSolidXCircle onClick={close} />}
-          {(commentsPage && comment["user"] === user.uid) && <BiSolidTrash onClick={deleteComment} />}
+          {(commentsPage && comment["user"] === user.uid) && (
+            <>
+              <BiSolidEditAlt className="edit" onClick={() => setEditing(true)} />
+              <BiSolidTrash onClick={deleteComment} />
+            </>
+          )}
         </div>
       </div>
       <div className="comment">
@@ -110,7 +141,20 @@ const  ViewCommentModal = ({
           <span onClick={clickUsername}>{nameOrYou}</span> 
           {' '}commented
         </div>
-        {commentParagraphs.map(c => <p>{c}</p>)}
+        {editing 
+          ? <>
+              <textarea 
+                value={editText}
+                onChange={e => setEditText(e.target.value)}
+              />
+              <div className='editButtons'>
+                <Button small text="Cancel" onClick={cancelEditing} />
+                <Spacer width="12px" />
+                <Button small text="Submit" onClick={editComment} loading={editLoading} />
+              </div>
+            </>
+          : comment["comment"]
+        }
       </div>
       <div className="actions">
         <div className="action" onClick={toggleUpvote}>

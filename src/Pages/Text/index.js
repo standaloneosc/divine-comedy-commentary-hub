@@ -44,7 +44,6 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   // Scroll to proper place!
   useEffect(() => {
     if (!location.hash || !canto) return
-    console.log('scroll use effect!', location.hash)
     const id = location.hash.slice(1)
     const el = document.getElementById(id)
 

@@ -5,8 +5,8 @@ export const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 25px;
-  width: ${props => props.iconOnly ? '25px' : '100px'};
+  height: ${props => props.small ? '18px' : '24px'};
+  width: ${props => props.iconOnly ? '24px' : props.small ? '75px' : '96px'};
   padding: 8px;
   margin: 0;
   font-size: ${props => props.iconOnly ? '18px' : '16px'};

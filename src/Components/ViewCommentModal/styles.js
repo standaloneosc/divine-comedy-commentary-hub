@@ -53,6 +53,10 @@ export const Container = styled.div`
         margin-right: 8px;
       }
 
+      .edit {
+        margin-right: 8px;
+      }
+
       svg {
         cursor: pointer;
 
@@ -65,9 +69,15 @@ export const Container = styled.div`
 
   .comment {
     padding: 12px;
-    font-size: 12px;
     max-height: 324px;
     overflow: scroll;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    
+    white-space: pre-line;
+    font-size: 12px;
 
     .name {
       margin-bottom: 8px;
@@ -79,6 +89,23 @@ export const Container = styled.div`
           text-decoration: underline;
         }
       }
+    }
+
+    textarea {
+      flex: 1;
+      border: 2px solid ${theme.colors.backgroundBrown};
+      outline: none;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 124px;
+      font-family: ${theme.fonts.garamond};
+    }
+
+    .editButtons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 12px;
     }
 }
 
