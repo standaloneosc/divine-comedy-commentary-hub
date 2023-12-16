@@ -22,6 +22,27 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
   const [userComments, setUserComments] = useState(null)
   const [otherUserData, setOtherUserData] = useState(null)
   const [otherUserLoading, setOtherUserLoading] = useState(!!otherUserId)
+  const [showDeletedComments, setShowDeletedComments] = useState(false)
+
+  const showComments = { ...userComments }
+  if (showComments && Object.keys(showComments)?.length) {
+    Object.keys(showComments).forEach(k => {
+      if ((showComments[k]["private"] && showComments[k]["user"] !== user.uid) || showComments[k]["deleted"]) {
+        delete showComments[k]
+      }
+    })
+  }
+
+  const deletedComments = { ...userComments }
+  if (deletedComments && Object.keys(deletedComments)?.length) {
+    Object.keys(deletedComments).forEach(k => {
+      if ((deletedComments[k]["private"] && deletedComments[k]["user"] !== user.uid) || !deletedComments[k]["deleted"]) {
+        delete deletedComments[k]
+      }
+    })
+  }
+
+  const isOwnPage = !otherUserId || otherUserId === user.uid
   
   useEffect(() => {
     if (!user) return
@@ -31,11 +52,6 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
     return onValue(commentsRef, snapshot => {
       if (snapshot.exists()) {
         const comments = snapshot.val()
-        Object.keys(comments).forEach(k => {
-          if (comments[k]["private"] && comments[k]["user"] !== user.uid) {
-            delete comments[k]
-          }
-        })
         setUserComments(comments)
       }
     })
@@ -82,8 +98,8 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
   }
 
   const otherUserName = otherUserData ? otherUserData["name"] : "Dantista Anonimo"
-  const pageTitle = otherUserData ? `${otherUserName}'s Comments` : 'My Comments'
-  const emptyMessage = otherUserId 
+  const pageTitle = (otherUserData && !isOwnPage) ? `${otherUserName}'s Comments` : 'My Comments'
+  const emptyMessage = (otherUserId && !isOwnPage)
     ? `${otherUserName.split(" ")[0]} hasn't written any comments yet.`
     : 'You have not written any comments. Write your first one!'
 
@@ -95,11 +111,11 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
           <div className="title"><h2>{pageTitle}</h2></div>
           <div className="right" />
         </Header>
-        {userComments && Object.keys(userComments).length > 0
-        ? Object.keys(userComments).map(k => (
+        {showComments && Object.keys(showComments).length > 0
+        ? Object.keys(showComments).map(k => (
           <div key={`comment-${k}`}>
             <ViewCommentModal
-              comment={userComments[k]}
+              comment={showComments[k]}
               commentKey={k}
               userUpvotes={currentUserUpvotes}
               userSaves={currentUserSaves}
@@ -110,6 +126,31 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
         ))
         : <>{emptyMessage}</>
         }
+        {(isOwnPage && deletedComments && Object.keys(deletedComments).length) ? (
+          <>
+            <Button
+              text={`${showDeletedComments ? 'Hide' : 'Show'} Deleted`}
+              onClick={() => setShowDeletedComments(!showDeletedComments)}
+            />
+            {showDeletedComments && (
+              <>
+                <Spacer height="12px" />
+                {Object.keys(deletedComments).map(k => (
+                  <div key={`comment-${k}`}>
+                    <ViewCommentModal
+                      comment={deletedComments[k]}
+                      commentKey={k}
+                      userUpvotes={currentUserUpvotes}
+                      userSaves={currentUserSaves}
+                      commentsPage
+                    />
+                    <Spacer height="24px" />
+                  </div>
+                ))}
+              </>
+            )}
+          </>
+        ) : null}
       </Container>
     </BaseLayout>
   )

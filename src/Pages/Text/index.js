@@ -65,7 +65,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       if (snapshot.exists()) {
         let comments = snapshot.val()
         Object.keys(comments).forEach(k => {
-          if (comments[k]["private"] && comments[k]["user"] !== user.uid) {
+          if ((comments[k]["private"] && comments[k]["user"] !== user.uid) || comments[k]["deleted"]) {
             delete comments[k]
           }
         })

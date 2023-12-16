@@ -61,7 +61,8 @@ const  ViewCommentModal = ({
   const deleteComment = () => {
     if (user.uid !== comment["user"]) return
 
-    const updates = getCommentUpdatesToMakeForRanges(commentKey, user.uid, comment["ranges"], null)
+    const keyAndSubfield = `${commentKey}/deleted`
+    const updates = getCommentUpdatesToMakeForRanges(keyAndSubfield, user.uid, comment["ranges"], true)
     update(ref(db), updates)
       .then(() => {
         if (close) close()
@@ -128,7 +129,9 @@ const  ViewCommentModal = ({
         <div className="right">
           <span className="date">{createdAtDate}</span>
           {close && <BiSolidXCircle onClick={close} />}
-          {(commentsPage && comment["user"] === user.uid) && (
+          {comment["deleted"] ? (
+            <>Deleted</>
+          ) : (commentsPage && comment["user"] === user.uid) && (
             <>
               <BiSolidEditAlt className="edit" onClick={() => setEditing(true)} />
               <BiSolidTrash onClick={deleteComment} />
