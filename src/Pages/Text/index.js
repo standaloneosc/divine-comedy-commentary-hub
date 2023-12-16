@@ -15,8 +15,9 @@ import ViewCommentModal from '../../Components/ViewCommentModal'
 import { HIGHLIGHTED_CLASS, HOVER_HIGHLIGHTED_CLASS, VIEWING_HIGHLIGHTED_CLASS } from '../../Utils/constants'
 import { mergeRangesAllParts } from '../../Utils/mergeRanges'
 import { capitalize, countWords, getInitials, getLineNumFromId, getWordId, getWordNumFromId, parseCantoParam } from '../../Utils/utility'
-import { ActionContainer, CantoContainer, CommentBubble, CommentsHolder, Line } from './styles'
+import { ActionContainer, CantoContainer, CommentBubble, CommentsHolder, Line, Painting } from './styles'
 import { highlightRanges } from '../../Utils/highlightRanges'
+import { paintings } from '../../Utils/assets'
 
 const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   const [user, userLoading, userError] = useAuthState(auth)
@@ -324,6 +325,13 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   return (
     <BaseLayout canto={cantoNum} part={part}>
       <CantoContainer>
+        {`${part}_canto_${cantoNum}` in paintings && (
+          <Painting>
+            <img src={paintings[`${part}_canto_${cantoNum}`]["src"]} alt={paintings[`${part}_canto_${cantoNum}`]["description"]} />
+            <p>{paintings[`${part}_canto_${cantoNum}`]["description"]}</p>
+            {paintings[`${part}_canto_${cantoNum}`]["subDescription"] && <p>{paintings[`${part}_canto_${cantoNum}`]["subDescription"]}</p>}
+          </Painting>
+        )}
         <div className='title'>{`${capitalize(part)} ${canto["name"].toUpperCase()}`}</div>
         <div className="body">
           <div className='lineNumbers'>

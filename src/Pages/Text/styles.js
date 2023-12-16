@@ -6,6 +6,7 @@ export const CantoContainer = styled.div`
   flex-direction: column;
   align-items: center;
   font-family: ${theme.fonts.garamond};
+  position: relative;
 
   .title {
     font-weight: bold;
@@ -121,4 +122,31 @@ export const CommentBubble = styled.div`
       background: ${theme.colors.highlightBrown};
     }
   `}
+`
+
+export const Painting = styled.div`
+  width: 324px;
+  position: absolute;
+  left: 4%;
+  top: 60px;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+
+  @media screen and (max-width: 1248px) {
+    display: none;
+  }
+
+  p {
+    margin: 0;
+    text-align: left;
+    color: ${theme.colors.textGray};
+    font-size: 14px;
+
+    &:nth-child(3) {
+      color: ${theme.colors.textGrayLight};
+    }
+  }
 `
