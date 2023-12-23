@@ -91,8 +91,8 @@ const Auth = () => {
       const userData = {
         name,
         email,
-        group: userGroup,
-        class: null,
+        group: userGroup === SELECT_DEFAULT ? null : userGroup,
+        groupName: userGroup === SELECT_DEFAULT ? null : groups[userGroup].name,
       }
       await set(ref(db, `users/${user.user.uid}`), userData)
       setSignupLoading(false)
