@@ -20,8 +20,7 @@ import Auth from './Pages/Auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import UserComments from './Pages/UserComments'
 import MySaved from './Pages/MySaved'
-
-// var firebaseui = require('firebaseui')
+import { UserDataContext } from './Utils/context'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -44,6 +43,7 @@ const App = () => {
 
   const [commediaData, setCommediaData] = useState(null)
 
+  const [userData, setUserData] = useState(null)
   const [userUpvotes, setUserUpvotes] = useState(null)
   const [userSaves, setUserSaves] = useState(null)
 
@@ -56,8 +56,8 @@ const App = () => {
 
     const upvotesRef = ref(db, `user-upvotes/${user.uid}`)
     return onValue(upvotesRef, snapshot => {
-      const upvotes = snapshot.val()
       if (snapshot.exists()) {
+        const upvotes = snapshot.val()
         setUserUpvotes(upvotes)
       }
     })
@@ -73,12 +73,27 @@ const App = () => {
 
     const savesRef = ref(db, `user-saves/${user.uid}`)
     return onValue(savesRef, snapshot => {
-      const saves = snapshot.val()
       if (snapshot.exists()) {
+        const saves = snapshot.val()
         setUserSaves(saves)
       }
     })
 
+  }, [user])
+
+  useEffect(() => {
+    if (!user) {
+      setUserData(null)
+      return
+    }
+
+    const userRef = ref(db, `users/${user.uid}`)
+    return onValue(userRef, snapshot => {
+      if (snapshot.exists()) {
+        const user = snapshot.val()
+        setUserData(user)
+      }
+    })
   }, [user])
 
   useEffect(() => {
@@ -173,37 +188,39 @@ const App = () => {
 
   return (
     <div className="App">
-      <Router>
-        <RouterRoutes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/inferno/:canto"
-            element={<Text part="inferno" commediaData={commediaData} userUpvotes={userUpvotes} userSaves={userSaves} />}
-          />
-          <Route
-            path="/purgatorio/:canto"
-            element={<Text part="purgatorio" commediaData={commediaData} userUpvotes={userUpvotes} userSaves={userSaves} />}
-          />
-          <Route
-            path="/paradiso/:canto"
-            element={<Text part="paradiso" commediaData={commediaData} userUpvotes={userUpvotes} userSaves={userSaves} />}
-          />
-          <Route path="/auth" element={<Auth />} />
-          <Route
-            path="/comments"
-            element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
-          />
-          <Route
-            path="/user/:otherUserId"
-            element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
-          />
-          <Route
-            path="/saved"
-            element={<MySaved userUpvotes={userUpvotes} userSaves={userSaves} />}
-          />
-          <Route path="*" element={<Home />} />
-        </RouterRoutes>
-      </Router>
+      <UserDataContext.Provider value={userData}>
+        <Router>
+          <RouterRoutes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/inferno/:canto"
+              element={<Text part="inferno" commediaData={commediaData} userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route
+              path="/purgatorio/:canto"
+              element={<Text part="purgatorio" commediaData={commediaData} userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route
+              path="/paradiso/:canto"
+              element={<Text part="paradiso" commediaData={commediaData} userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/comments"
+              element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route
+              path="/user/:otherUserId"
+              element={<UserComments userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route
+              path="/saved"
+              element={<MySaved userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route path="*" element={<Home />} />
+          </RouterRoutes>
+        </Router>
+      </UserDataContext.Provider>
     </div>
   );
 }

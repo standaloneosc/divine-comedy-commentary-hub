@@ -1,5 +1,7 @@
 export const PUNCTUATION = [",", ".", "!", ";", ":"]
 
+export const SELECT_DEFAULT = "SELECT_DEFAULT"
+
 export const HIGHLIGHTED_CLASS = "highlighted"
 export const HOVER_HIGHLIGHTED_CLASS = "hover-highlighted"
 export const VIEWING_HIGHLIGHTED_CLASS = "viewing-highlighted"

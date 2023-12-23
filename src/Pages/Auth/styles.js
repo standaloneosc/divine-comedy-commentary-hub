@@ -47,3 +47,29 @@ export const Error = styled.div`
   font-size: 12px;
   margin-bottom: 12px;
 `
+
+export const SelectGroup = styled.div`
+  position: relative;
+  cursor: pointer;
+
+  >select {
+    background: none;
+    outline: none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    border: 2px solid ${theme.colors.backgroundBrown};
+    padding: 12px;
+    border-radius: 8px;
+    width: 222px;
+    cursor: pointer;
+    color: ${props => props.notSelected && theme.colors.textGrayLight};
+  }
+
+  svg {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    color: ${theme.colors.backgroundBrown};
+    pointer-events: none;
+  }
+`

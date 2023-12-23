@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import _ from 'underscore'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -18,9 +18,14 @@ import { capitalize, countWords, getInitials, getLineNumFromId, getWordId, getWo
 import { ActionContainer, CantoContainer, CommentBubble, CommentsHolder, Line, Painting } from './styles'
 import { highlightRanges } from '../../Utils/highlightRanges'
 import { paintings } from '../../Utils/assets'
+import Switch from '../../Components/Switch'
+import Spacer from '../../Components/Spacer'
+import { UserDataContext } from '../../Utils/context'
 
 const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   const [user, userLoading, userError] = useAuthState(auth)
+  const userData = useContext(UserDataContext)
+
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -28,8 +33,10 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   const [isCommenting, setIsCommenting] = useState(false)
   const [highlightedRanges, setHighlightedRanges] = useState([])
   const [hoverRanges, setHoverRanges] = useState([])
+
   const [viewingCommentKey, setViewingCommentKey] = useState(null)
   const [viewingCommentLine, setViewingCommentLine] = useState(null)
+  const [onlyShowGroup, setOnlyShowGroup] = useState(false)
 
   const [cantoComments, setCantoComments] = useState(null)
 
@@ -57,7 +64,6 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   useEffect(() => {
     const cantoNum = parseCantoParam(cantoParam, part)
     if (!cantoNum) return
-    console.log("Use effect fetch data", cantoNum)
     setCantoComments([])
 
     // Fetch comments for this canto
@@ -76,12 +82,10 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   }, [user, cantoParam, part])
 
   useEffect(() => {
-    // console.log('use effect user highlighted:', highlightedRanges)
     highlightRanges(highlightedRanges, canto, HIGHLIGHTED_CLASS)
   }, [highlightedRanges, canto, part, cantoParam])
 
   useEffect(() => {
-    // console.log('use effect user highlighted:', hoverRanges)
     if (hoverRanges.length) {
       highlightRanges(hoverRanges, canto, HOVER_HIGHLIGHTED_CLASS)
     }
@@ -270,7 +274,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   }
 
   const getCommentsNodeForLine = lineNum => {
-    const comments = []
+    let comments = []
 
     for (let key in cantoComments) {
       if (key === "undefined") continue
@@ -284,6 +288,10 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       }
     }
 
+    if (onlyShowGroup) {
+      comments = comments.filter(c => c.group === userData.group)
+    }
+
     if (!comments.length) return <CommentsHolder />
 
     return (
@@ -291,7 +299,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
         {comments
           .sort((a, b) => b["upvotes"] - a["upvotes"])
           .slice(0, 3)
-          .map(c => (
+          .map((c, idx) => (
           <>
             <CommentBubble
               onMouseEnter={() => setHoverRanges(c["ranges"])}
@@ -302,6 +310,7 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
                 setViewingCommentLine(lineNum)
               }}
               selected={viewingCommentKey === c["key"] ? 1 : 0}
+              key={`bubble-${lineNum}-${idx}`}
             >
               {getInitials(c["name"])}
             </CommentBubble>
@@ -332,7 +341,18 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
             {paintings[`${part}_canto_${cantoNum}`]["subDescription"] && <p>{paintings[`${part}_canto_${cantoNum}`]["subDescription"]}</p>}
           </Painting>
         )}
-        <div className='title'>{`${capitalize(part)} ${canto["name"].toUpperCase()}`}</div>
+        <div className='title'>
+          <div></div>
+          <div>{`${capitalize(part)} ${canto["name"].toUpperCase()}`}</div>
+          {userData?.groupName && userData?.group ? (
+            <div className="groupToggle">
+              <Switch checked={onlyShowGroup} setChecked={setOnlyShowGroup} />
+              <Spacer width="8px" />
+              Only show comments from
+              <b>{userData.groupName}</b>
+            </div>
+          ) : <div />}
+        </div>
         <div className="body">
           <div className='lineNumbers'>
             {canto["terzinas"].map((t, tIdx) => <div className="terzina" key={`number-terzina-${tIdx}`}>

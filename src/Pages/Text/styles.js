@@ -9,8 +9,40 @@ export const CantoContainer = styled.div`
   position: relative;
 
   .title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     font-weight: bold;
     font-size: 24px;
+
+    width: 100%;
+
+    >div {
+      flex: 1;
+    }
+
+    .groupToggle {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      font-size: 12px;
+      font-weight: normal;
+
+      b {
+        margin-left: 3px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 888px) {
+    .title {
+      flex-direction: column;
+
+      .groupToggle {
+        margin-top: 8px;
+      }
+    }
   }
 
   .body {

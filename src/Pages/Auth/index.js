@@ -1,28 +1,44 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { PiCaretDownBold } from "react-icons/pi"
+import { Navigate } from 'react-router-dom'
 
 import { auth, db } from '../../App'
 import BaseLayout from '../../Layouts/BaseLayout'
-import { Navigate } from 'react-router-dom'
-import { Container, Error, Input, LoginBox, SwitchLoginSignup } from './styles'
 import Button from '../../Components/Button'
 import Spacer from '../../Components/Spacer'
-import { AUTH_ERROR_CODES } from '../../Utils/constants'
-import { ref, set } from 'firebase/database'
+
+import { AUTH_ERROR_CODES, SELECT_DEFAULT } from '../../Utils/constants'
+import { onValue, ref, set } from 'firebase/database'
+
+import { Container, Error, Input, LoginBox, SelectGroup, SwitchLoginSignup } from './styles'
 
 const Auth = () => {
   const [user, userLoading, userError] = useAuthState(auth)
   const [signingUp, setSigningUp] = useState(false)
+  const [groups, setGroups] = useState(null)
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
+  const [userGroup, setUserGroup] = useState(SELECT_DEFAULT)
+  const [groupCode, setGroupCode] = useState("")
 
   const [loginError, setLoginError] = useState("")
   const [loginLoading, setLoginLoading] = useState(false)
   const [signupError, setSignupError] = useState("")
   const [signupLoading, setSignupLoading] = useState(false)
+
+  useEffect(() => {
+    const savesRef = ref(db, `groups`)
+    return onValue(savesRef, snapshot => {
+      if (snapshot.exists()) {
+        const groups = snapshot.val()
+        setGroups(groups)
+      }
+    })
+  }, [])
 
   if (user && !(signupLoading || signupError)) {
     return <Navigate to="/" />
@@ -57,6 +73,16 @@ const Auth = () => {
       return
     }
 
+    if (userGroup !== SELECT_DEFAULT && !groupCode) {
+      setSignupError("Please enter your group's join code.")
+      return
+    }
+
+    if (userGroup !== SELECT_DEFAULT && groups[userGroup]["joinCode"] !== groupCode.trim().toUpperCase()) {
+      setSignupError("Your group code is incorrect. Select a different group or try again.")
+      return
+    }
+
     setSignupLoading(true)
 
     try {
@@ -65,17 +91,16 @@ const Auth = () => {
       const userData = {
         name,
         email,
+        group: userGroup,
         class: null,
       }
       await set(ref(db, `users/${user.user.uid}`), userData)
-
+      setSignupLoading(false)
+      setSignupError("")
     } catch (err) {
       console.log("Error signing up", err)
       setSignupLoading(false)
-      setSignupError("An error occurred setting your name.")
-    } finally {
-      setSignupLoading(false)
-      setSignupError("")
+      setSignupError(getErrorCode(err.code))
     }
   }
 
@@ -102,6 +127,23 @@ const Auth = () => {
           {signingUp && <Input placeholder='Name' value={name} onChange={e => setName(e.target.value)} />}
           <Input placeholder='Email' value={email} onChange={e => setEmail(e.target.value)} />
           <Input placeholder='Password' type="password" value={password} onChange={e => setPassword(e.target.value)} />
+          {signingUp && groups ? (
+            <>
+            <SelectGroup notSelected={userGroup === SELECT_DEFAULT}>
+              <select value={userGroup} onChange={e => setUserGroup(e.target.value)}>
+                <option default value={SELECT_DEFAULT}>Join a group (optional)</option>
+                {Object.keys(groups).map(k => (
+                  <option value={k}>{groups[k]["name"]}</option>
+                ))}
+              </select>
+              <PiCaretDownBold />
+            </SelectGroup>
+            <Spacer height="12px" />
+            </>
+          ) : null}
+          {signingUp && userGroup !== SELECT_DEFAULT ? (
+            <Input placeholder="Group code (6 letters)" value={groupCode} onChange={e => setGroupCode(e.target.value)} />
+          ) : null}
           <Button
             text={signingUp ? "Sign up" : "Log in"}
             loading={userLoading || signupLoading || loginLoading}

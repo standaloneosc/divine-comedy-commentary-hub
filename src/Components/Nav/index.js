@@ -67,7 +67,8 @@ const Nav = ({ hideCantoNav, canto, part }) => {
   return (
     <NavContainer>
       <OuterContainer>
-        <InnerContainer>
+        <div className="left" />
+        <InnerContainer onClick={() => setShowUserDropdown(false)}>
           <div id="title" className="title" onClick={() => navigate("/")}>
             Divina Commedia Commentary Hub
           </div>
@@ -91,7 +92,7 @@ const Nav = ({ hideCantoNav, canto, part }) => {
             </>
           }
         </InnerContainer>
-        {user && (
+        {user ? (
           <UserArea>
             <div className="initials" onClick={() => setShowUserDropdown(!showUserDropdown)}>
               {getInitials(user.displayName)}
@@ -104,7 +105,7 @@ const Nav = ({ hideCantoNav, canto, part }) => {
               </UserDropdown>
             )}
           </UserArea>
-        )}
+        ) : <div className="right" />}
       </OuterContainer>
     </NavContainer>
   )

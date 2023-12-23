@@ -15,14 +15,28 @@ export const OuterContainer = styled.div`
   justify-content: center;
   width: 100%;
   position: relative;
+  padding: 24px 0;
+
+  .left {
+    flex: 1;
+    justify-content: flex-start;
+    padding: 0 48px;
+  }
+
+  .right {
+    flex: 1;
+    justify-content: flex-end;
+    padding: 0 48px;
+  }
 `
 
 export const InnerContainer = styled.div`
-  padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  flex: 6;
 
   .title {
     font-weight: bold;
@@ -41,9 +55,10 @@ export const ButtonsContainer = styled.div`
 export const UserArea = styled.div`
   display: flex;
   align-items: center;
-  position: absolute;
-  right: 72px;
-  top: 36px;
+  position: relative;
+  flex: 1;
+  justify-content: flex-end;
+  padding: 0 48px;
 
   .initials {
     background: ${theme.colors.backgroundBrown};
@@ -69,10 +84,10 @@ export const UserDropdown = styled.div`
   flex-direction: column;
   position: absolute;
   top: 48px;
-  right: 0;
+  right: 48px;
 
   border-radius: 8px;
-  background: white;
+  background: ${theme.colors.backgroundTan};
   box-shadow: 0 2px 5px rgba(50, 50, 50, 0.3);
   border: 2px solid ${theme.colors.backgroundBrown};
   z-index: 10;

@@ -7,10 +7,20 @@ import inferno_canto_15 from "../Assets/inferno_canto_15.jpg"
 import inferno_canto_17 from "../Assets/inferno_canto_17.jpg"
 import inferno_canto_18 from "../Assets/inferno_canto_18.jpg"
 import inferno_canto_21 from "../Assets/inferno_canto_21.jpeg"
-import inferno_canto_29 from "../Assets/inferno_canto_29.jpg"
 import inferno_canto_25 from "../Assets/inferno_canto_25.jpg"
+import inferno_canto_29 from "../Assets/inferno_canto_29.jpg"
+import inferno_canto_34 from "../Assets/inferno_canto_34.jpg"
 import purgatorio_canto_1 from "../Assets/purgatorio_canto_1.jpg"
+import purgatorio_canto_2 from "../Assets/purgatorio_canto_2.jpg"
+import purgatorio_canto_5 from "../Assets/purgatorio_canto_5.jpg"
+import purgatorio_canto_8 from "../Assets/purgatorio_canto_8.jpg"
+import purgatorio_canto_9 from "../Assets/purgatorio_canto_9.jpg"
+import purgatorio_canto_10 from "../Assets/purgatorio_canto_10.jpg"
+import purgatorio_canto_11 from "../Assets/purgatorio_canto_11.jpg"
 import paradiso_canto_1 from "../Assets/paradiso_canto_1.jpeg"
+import paradiso_canto_3 from "../Assets/paradiso_canto_3.jpg"
+import paradiso_canto_10 from '../Assets/paradiso_canto_10.jpg'
+import paradiso_canto_12 from "../Assets/paradiso_canto_12.jpg"
 import paradiso_canto_33 from "../Assets/paradiso_canto_33.jpg"
 
 export const paintings = {
@@ -59,13 +69,58 @@ export const paintings = {
     src: inferno_canto_25,
     description: "William Blake - The Circle of the Thieves; Agnolo Brunelleschi Attacked by a Six-Footed Serpent, 1827"
   },
+  inferno_canto_34: {
+    src: inferno_canto_34,
+    description: "Gustave Doré - Inferno, Canto 34, 1892",
+  },
   purgatorio_canto_1: {
     src: purgatorio_canto_1,
     description: "Agnolo Bronzino - Dante Facing Purgatory, 1530",
   },
+  purgatorio_canto_2: {
+    src: purgatorio_canto_2,
+    description: "Gustave Doré - Purgatorio, Canto 2, 1885",
+    subDescription: "Dante bows before the angel pilot",
+  },
+  purgatorio_canto_5: {
+    src: purgatorio_canto_5,
+    description: "Stefano Ussi - Pia' de Tolomei, 1867"
+  },
+  purgatorio_canto_8: {
+    src: purgatorio_canto_8,
+    description: "Hippolyte Flandrin - Le Dante, conduit par Virgile, offre des consolations aux âmes des Envieux, 1835",
+    subDescription: "Dante, led by Virgil, offers consolation to the souls in the terrace of the envious"
+  },
+  purgatorio_canto_9: {
+    src: purgatorio_canto_9,
+    description: "William Blake - The Gate of Purgatory, 1827",
+  },
+  purgatorio_canto_10: {
+    src: purgatorio_canto_10,
+    description: "Francesco Scaramuzza - Purgatorio , Canto IX, 1850",
+    subDescription: "From the previous canto, Dante is lifted up by the golden eagle in his dream"
+  },
+  purgatorio_canto_11: {
+    src: purgatorio_canto_11,
+    description: "Joseph Anton Koch - Purgatorio, 1828"
+  },
   paradiso_canto_1: {
     src: paradiso_canto_1,
     description: "Jean-Jacques Feuchère - Dante Meditating on the Divine Comedy, 1843"
+  },
+  paradiso_canto_3: {
+    src: paradiso_canto_3,
+    description: "Philipp Veit - Fresco",
+    subDescription: "Dante and Beatrice speak to Piccarda and Constance of Sicily",
+  },
+  paradiso_canto_10: {
+    src: paradiso_canto_10,
+    description: "Philipp Veit - Fresco",
+    subDescription: "Dante and Beatrice speak to the teachers of wisdom Thomas Aquinas, Albertus Magnus, Peter Lombard and Sigier of Brabant in the Sphere of the Sun",
+  },
+  paradiso_canto_12: {
+    src: paradiso_canto_12,
+    description: "John Flaxman - Album of Drawings for Dante's Divine Comedy, Paradiso Canto 12, 1793",
   },
   paradiso_canto_33: {
     src: paradiso_canto_33,

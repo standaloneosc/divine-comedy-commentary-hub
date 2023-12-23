@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { IoMdClose } from "react-icons/io"
 import { BsFillCircleFill } from "react-icons/bs"
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -11,6 +11,7 @@ import Spacer from '../Spacer'
 
 import { PART_ABBREVIATIONS } from "../../Utils/constants"
 import { getCommentUpdatesToMakeForRanges } from "../../Utils/utility"
+import { UserDataContext } from "../../Utils/context"
 
 import {
   Container, TextBox, RangeBox, Label,
@@ -21,6 +22,7 @@ const SelectAndCommentModal = ({
   modalVisible, cancel, highlightedRanges, deleteRange, isCommenting, setIsCommenting,
 }) => {
   const [user] = useAuthState(auth)
+  const userData = useContext(UserDataContext)
 
   const [comment, setComment] = useState("")
   const [isPrivate, setIsPrivate] = useState(false)
@@ -51,6 +53,7 @@ const SelectAndCommentModal = ({
       upvotes: 0,
       createdAt: serverTimestamp(),
       private: isPrivate,
+      group: userData?.group || null,
     }
 
     const newCommentKey = push(child(ref(db), 'comments')).key
