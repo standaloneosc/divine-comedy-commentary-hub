@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useNavigate, Navigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { child, get, onValue, ref } from 'firebase/database'
 
 import { auth, db } from '../../App'
@@ -12,12 +12,13 @@ import ViewCommentModal from '../../Components/ViewCommentModal'
 import Spacer from '../../Components/Spacer'
 import Button from '../../Components/Button'
 import { BiHome } from 'react-icons/bi'
+import AuthLayout from '../../Layouts/AuthLayout'
 
 const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserSaves }) => {  
   const { otherUserId } = useParams()
   const navigate = useNavigate()
 
-  const [user, userLoading, userError] = useAuthState(auth)
+  const [user] = useAuthState(auth)
 
   const [userComments, setUserComments] = useState(null)
   const [otherUserData, setOtherUserData] = useState(null)
@@ -73,28 +74,12 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
       })
   }, [otherUserId])
 
-  if (userLoading || otherUserLoading) {
+  if (otherUserLoading) {
     return (
       <BaseLayout>
         <p>Loading...</p>
       </BaseLayout>
     )
-  } else if (userError) {
-    return (
-      <BaseLayout>
-        <p>An authentication error occurred. Please  
-          <span
-            onClick={() => navigate("/auth")}
-            style={{ marginLeft: '4px', textDecoration: 'underline', cursor: 'pointer' }}
-          >
-            try again
-          </span>
-          .
-        </p>
-      </BaseLayout>
-    )
-  } else if (!user) {
-    return <Navigate to="/auth" />
   }
 
   const otherUserName = otherUserData ? otherUserData["name"] : "Dantista Anonimo"
@@ -104,7 +89,7 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
     : 'You have not written any comments. Write your first one!'
 
   return (
-    <BaseLayout hideCantoNav>
+    <AuthLayout hideCantoNav>
       <Container>
         <Header>
           <div className="button"><Button onClick={() => navigate("/")} icon={<BiHome />} /></div>
@@ -152,7 +137,7 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
           </>
         ) : null}
       </Container>
-    </BaseLayout>
+    </AuthLayout>
   )
 }
 

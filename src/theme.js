@@ -30,5 +30,6 @@ export const theme = {
     pageMaxWidth: '1496px',
     commentModalWidth: '324px',
     commentModalHeight: '324px',
+    tablet: '888px',
   }
 }

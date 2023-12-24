@@ -22,16 +22,6 @@ export const LoginBox = styled.div`
   }
 `
 
-export const Input = styled.input`
-  padding: 12px;
-  border: 2px solid ${theme.colors.backgroundBrown};
-  background: ${theme.colors.backgroundTan};
-  outline: none;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  width: 60%;
-`
-
 export const SwitchLoginSignup = styled.div`
   font-size: 12px;
 

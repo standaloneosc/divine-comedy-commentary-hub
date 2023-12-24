@@ -10,9 +10,10 @@ import Button from '../../Components/Button'
 import Spacer from '../../Components/Spacer'
 
 import { AUTH_ERROR_CODES, SELECT_DEFAULT } from '../../Utils/constants'
-import { onValue, ref, set } from 'firebase/database'
+import { increment, onValue, ref, set } from 'firebase/database'
 
-import { Container, Error, Input, LoginBox, SelectGroup, SwitchLoginSignup } from './styles'
+import { Container, Error, LoginBox, SelectGroup, SwitchLoginSignup } from './styles'
+import Input from '../../Components/Input'
 
 const Auth = () => {
   const [user, userLoading, userError] = useAuthState(auth)
@@ -31,8 +32,8 @@ const Auth = () => {
   const [signupLoading, setSignupLoading] = useState(false)
 
   useEffect(() => {
-    const savesRef = ref(db, `groups`)
-    return onValue(savesRef, snapshot => {
+    const groupsRef = ref(db, `groups`)
+    return onValue(groupsRef, snapshot => {
       if (snapshot.exists()) {
         const groups = snapshot.val()
         setGroups(groups)
@@ -95,6 +96,11 @@ const Auth = () => {
         groupName: userGroup === SELECT_DEFAULT ? null : groups[userGroup].name,
       }
       await set(ref(db, `users/${user.user.uid}`), userData)
+
+      if (userGroup !== SELECT_DEFAULT) {
+        await set(ref(db, `groups/${userGroup}/memberCount`), increment(1))
+      }
+
       setSignupLoading(false)
       setSignupError("")
     } catch (err) {
@@ -124,9 +130,9 @@ const Auth = () => {
           {userError && <Error>{userError.message}</Error>}
           {signupError && <Error>{signupError}</Error>}
           {loginError && <Error>{loginError}</Error>}
-          {signingUp && <Input placeholder='Name' value={name} onChange={e => setName(e.target.value)} />}
-          <Input placeholder='Email' value={email} onChange={e => setEmail(e.target.value)} />
-          <Input placeholder='Password' type="password" value={password} onChange={e => setPassword(e.target.value)} />
+          {signingUp && <Input placeholder='Name' value={name} setValue={setName} />}
+          <Input placeholder='Email' value={email} setValue={setEmail} />
+          <Input placeholder='Password' type="password" value={password} setValue={setPassword} />
           {signingUp && groups ? (
             <>
             <SelectGroup notSelected={userGroup === SELECT_DEFAULT}>
@@ -142,7 +148,7 @@ const Auth = () => {
             </>
           ) : null}
           {signingUp && userGroup !== SELECT_DEFAULT ? (
-            <Input placeholder="Group code (6 letters)" value={groupCode} onChange={e => setGroupCode(e.target.value)} />
+            <Input placeholder="Group code (6 letters)" value={groupCode} setValue={setGroupCode} upperCaseOnly maxLength={6} />
           ) : null}
           <Button
             text={signingUp ? "Sign up" : "Log in"}

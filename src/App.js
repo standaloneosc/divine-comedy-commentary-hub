@@ -21,6 +21,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import UserComments from './Pages/UserComments'
 import MySaved from './Pages/MySaved'
 import { UserDataContext } from './Utils/context'
+import Admin from './Pages/Admin'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -216,6 +217,10 @@ const App = () => {
             <Route
               path="/saved"
               element={<MySaved userUpvotes={userUpvotes} userSaves={userSaves} />}
+            />
+            <Route
+              path="/admin"
+              element={<Admin />}
             />
             <Route path="*" element={<Home />} />
           </RouterRoutes>

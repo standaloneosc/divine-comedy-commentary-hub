@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { signOut } from 'firebase/auth'
@@ -20,9 +20,12 @@ import {
 } from './styles'
 import { PART_ORDER } from '../../Utils/constants';
 import { getInitials } from '../../Utils/utility';
+import { UserDataContext } from '../../Utils/context';
+import NavLink from '../NavLink';
 
 const Nav = ({ hideCantoNav, canto, part }) => {
   const [user] = useAuthState(auth)
+  const userData = useContext(UserDataContext)
 
   const [showCantoNav, setShowCantoNav] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
@@ -67,30 +70,15 @@ const Nav = ({ hideCantoNav, canto, part }) => {
   return (
     <NavContainer>
       <OuterContainer>
-        <div className="left" />
+        <div className="left">
+          {userData?.admin && (
+            <NavLink to="/admin">Admin</NavLink>
+          )}
+        </div>
         <InnerContainer onClick={() => setShowUserDropdown(false)}>
           <div id="title" className="title" onClick={() => navigate("/")}>
             Divina Commedia Commentary Hub
           </div>
-          {!hideCantoNav && (
-            <ButtonsContainer>
-              <Button icon={<FaAngleLeft />} onClick={prevCanto} />
-              <Spacer width="8px" />
-              <Button text={showCantoNav ? "Hide" : "Cantos"} onClick={() => setShowCantoNav(!showCantoNav)} />
-              <Spacer width="8px" />
-              <Button icon={<FaAngleRight />} onClick={nextCanto}/>
-            </ButtonsContainer>
-          )}
-          {showCantoNav && 
-            <>
-              <Spacer height="12px" />
-              <CantoNavigator
-                hideCantoNav={() => setShowCantoNav(false)}
-                currentPart={part}
-                currentCanto={canto}
-              />
-            </>
-          }
         </InnerContainer>
         {user ? (
           <UserArea>
@@ -107,6 +95,25 @@ const Nav = ({ hideCantoNav, canto, part }) => {
           </UserArea>
         ) : <div className="right" />}
       </OuterContainer>
+      {!hideCantoNav && (
+        <ButtonsContainer>
+          <Button icon={<FaAngleLeft />} onClick={prevCanto} />
+          <Spacer width="8px" />
+          <Button text={showCantoNav ? "Hide" : "Cantos"} onClick={() => setShowCantoNav(!showCantoNav)} />
+          <Spacer width="8px" />
+          <Button icon={<FaAngleRight />} onClick={nextCanto}/>
+        </ButtonsContainer>
+      )}
+      {showCantoNav && 
+        <>
+          <Spacer height="12px" />
+          <CantoNavigator
+            hideCantoNav={() => setShowCantoNav(false)}
+            currentPart={part}
+            currentCanto={canto}
+          />
+        </>
+      }
     </NavContainer>
   )
 }

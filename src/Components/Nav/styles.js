@@ -7,15 +7,20 @@ export const NavContainer = styled.div`
   margin: 0 auto;
   background: ${theme.colors.backgroundTan};
   border-bottom: 2px solid ${theme.colors.backgroundBrown};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 24px;
 `
 
 export const OuterContainer = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   width: 100%;
   position: relative;
-  padding: 24px 0;
+  padding-top: 24px;
+  margin-bottom: 12px;
 
   .left {
     flex: 1;
@@ -27,6 +32,10 @@ export const OuterContainer = styled.div`
     flex: 1;
     justify-content: flex-end;
     padding: 0 48px;
+  }
+
+  @media screen and (max-width: ${theme.sizes.tablet}) {
+    align-items: flex-start;
   }
 `
 
@@ -42,7 +51,6 @@ export const InnerContainer = styled.div`
     font-weight: bold;
     font-size: 36px;
     font-family: ${theme.fonts.almendra};
-    margin-bottom: 12px;
     color: ${theme.colors.backgroundBrown};
     cursor: pointer;
   }

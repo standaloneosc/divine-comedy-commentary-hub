@@ -32,10 +32,14 @@ export const CantoContainer = styled.div`
       b {
         margin-left: 3px;
       }
+
+      select {
+        outline: none;
+      }
     }
   }
 
-  @media screen and (max-width: 888px) {
+  @media screen and (max-width: ${theme.sizes.tablet}) {
     .title {
       flex-direction: column;
 

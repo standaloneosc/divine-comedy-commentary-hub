@@ -12,7 +12,7 @@ import SelectTextButton from '../../Components/SelectTextButton'
 import SelectAndCommentModal from "../../Components/SelectAndCommentModal"
 import ViewCommentModal from '../../Components/ViewCommentModal'
 
-import { HIGHLIGHTED_CLASS, HOVER_HIGHLIGHTED_CLASS, VIEWING_HIGHLIGHTED_CLASS } from '../../Utils/constants'
+import { HIGHLIGHTED_CLASS, HOVER_HIGHLIGHTED_CLASS, SELECT_DEFAULT, VIEWING_HIGHLIGHTED_CLASS } from '../../Utils/constants'
 import { mergeRangesAllParts } from '../../Utils/mergeRanges'
 import { capitalize, countWords, getInitials, getLineNumFromId, getWordId, getWordNumFromId, parseCantoParam } from '../../Utils/utility'
 import { ActionContainer, CantoContainer, CommentBubble, CommentsHolder, Line, Painting } from './styles'
@@ -39,15 +39,14 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
   const [onlyShowGroup, setOnlyShowGroup] = useState(false)
 
   const [cantoComments, setCantoComments] = useState(null)
+  const [allGroups, setAllGroups] = useState(null)
 
   const viewingComment = (viewingCommentKey && cantoComments)
     ? cantoComments[Object.keys(cantoComments).find(k => k === viewingCommentKey)]
     : null
 
   let canto
-
   const { canto: cantoParam } = useParams()
-  // console.log(`Canto: ${part} ${cantoParam}`)
 
   // Scroll to proper place!
   useEffect(() => {
@@ -60,13 +59,12 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
     }
   }, [location, canto])
 
-  // Set up data fetching
+  // Data fetching
   useEffect(() => {
     const cantoNum = parseCantoParam(cantoParam, part)
     if (!cantoNum) return
     setCantoComments([])
 
-    // Fetch comments for this canto
     const commentsRef = ref(db, `canto-comments/${part}/${cantoNum}`);
     return onValue(commentsRef, snapshot => {
       if (snapshot.exists()) {
@@ -80,6 +78,16 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       }
     });
   }, [user, cantoParam, part])
+
+  useEffect(() => {
+    const groupsRef = ref(db, `groups`)
+    return onValue(groupsRef, snapshot => {
+      if (snapshot.exists()) {
+        const groups = snapshot.val()
+        setAllGroups(groups)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     highlightRanges(highlightedRanges, canto, HIGHLIGHTED_CLASS)
@@ -214,7 +222,6 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
 
     let anchorId
     if (sel.anchorNode.id) {
-      console.log('anchor node has ID!!!', sel.anchorNode.id)
       anchorId = sel.anchorNode.id
     } else {
       anchorId = sel.anchorNode.parentElement.id
@@ -225,7 +232,6 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
 
     let focusId
     if (sel.focusNode.id) {
-      console.log('focus node has ID!!!', sel.focusNode.id)
       focusId = sel.focusNode.id
     } else {
       focusId = sel.focusNode.parentElement.id
@@ -288,8 +294,12 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       }
     }
 
-    if (onlyShowGroup) {
+    console.log('only:', onlyShowGroup)
+    if (onlyShowGroup === true) {
       comments = comments.filter(c => c.group === userData.group)
+    } else if (onlyShowGroup && onlyShowGroup !== SELECT_DEFAULT) {
+      // Admin has selected a group to filter by
+      comments = comments.filter(c => c.group === onlyShowGroup)
     }
 
     if (!comments.length) return <CommentsHolder />
@@ -344,7 +354,19 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
         <div className='title'>
           <div></div>
           <div>{`${capitalize(part)} ${canto["name"].toUpperCase()}`}</div>
-          {userData?.groupName && userData?.group ? (
+          {userData?.admin && !!allGroups ? (
+            <div className="groupToggle">
+              Only show comments from
+              <Spacer width="6px" />
+              <select value={onlyShowGroup} onChange={e => setOnlyShowGroup(e.target.value)}>
+                <option value={SELECT_DEFAULT}>Select a group</option>
+                {Object.keys(allGroups).map(k => (
+                  <option value={k}>{allGroups[k].name}</option>
+                ))}
+              </select>
+            </div>
+          )
+          : userData?.groupName && userData?.group && !userData?.admin ? (
             <div className="groupToggle">
               <Switch checked={onlyShowGroup} setChecked={setOnlyShowGroup} />
               <Spacer width="8px" />
