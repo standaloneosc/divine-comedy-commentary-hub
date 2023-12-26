@@ -3,7 +3,9 @@ import { ThreeDots } from 'react-loader-spinner'
 import { ButtonContainer } from './styles'
 import { theme } from '../../theme'
 
-const Button = ({ text, onClick, icon, primary, loading, small }) => {
+const Button = ({
+  text, onClick, icon, primary, loading, small, disabled
+}) => {
   if (loading) {
     return (
       <ButtonContainer 
@@ -21,10 +23,14 @@ const Button = ({ text, onClick, icon, primary, loading, small }) => {
 
   return ( 
   <ButtonContainer
-    onClick = {onClick}
+    onClick = {() => {
+      if (disabled) return
+      onClick()
+    }}
     iconOnly={icon && !text ? 1 : 0}
     primary={primary}
     small={small}
+    disabled={disabled}
   >
     {icon ? icon : null}
     {text}

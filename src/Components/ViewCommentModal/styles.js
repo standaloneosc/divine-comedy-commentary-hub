@@ -5,7 +5,6 @@ export const OuterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 324px;
 
   .replyBox {
     border-color: ${theme.colors.accentBrownLight};
@@ -19,7 +18,7 @@ export const OuterContainer = styled.div`
 export const Container = styled.div`
   background: ${theme.colors.backgroundTan};
   border: 2px solid ${theme.colors.accentBrown};
-  width: 100%;
+  width: 324px;
   border-radius: 8px;
   box-shadow: 0 10px 15px rgba(50, 50, 50, 0.3);
   text-align: left;
@@ -28,7 +27,8 @@ export const Container = styled.div`
 
   ${props => props.commentsPage && css`
     box-shadow: none;
-    width: 512px;
+    width: 90vw;
+    max-width: 512px;
   `}
 
   .header {
@@ -128,6 +128,12 @@ export const Container = styled.div`
       align-items: center;
       justify-content: center;
       margin-top: 12px;
+    }
+
+    .error {
+      color: ${theme.colors.red};
+      margin-top: 4px;
+      align-self: center;
     }
   }
 

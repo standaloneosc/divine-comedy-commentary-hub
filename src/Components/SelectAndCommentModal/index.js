@@ -42,7 +42,7 @@ const SelectAndCommentModal = ({
   }
 
   const submitComment = () => {
-    if (!highlightedRanges.length || !comment) return
+    if (!highlightedRanges.length || !comment || userData?.demo) return
     setSubmitLoading(true)
 
     const commentData = {
@@ -91,8 +91,9 @@ const SelectAndCommentModal = ({
           <Actions>
             <Button text="Back" onClick={() => setIsCommenting(false)} />
             <Spacer width="12px" />
-            <Button text="Submit Comment" onClick={submitComment} loading={submitLoading} />
+            <Button text="Submit Comment" onClick={submitComment} loading={submitLoading} disabled={userData?.demo} />
           </Actions>
+          {userData?.demo && <div className="error">You can not add comments with a guest/demo account.</div>}
         </>
       ) : (
         <>

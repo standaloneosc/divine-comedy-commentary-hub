@@ -11,4 +11,8 @@ export const PageContainer = styled.div`
   padding: 24px 48px;
   position: relative;
   font-family: ${theme.fonts.garamond};
+
+  @media screen and (max-width: ${theme.sizes.phone}) {
+    padding: 24px 0;
+  }
 `

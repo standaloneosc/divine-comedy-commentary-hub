@@ -14,7 +14,8 @@ export const Container = styled.div`
 export const Header = styled.div`
   display: flex;
   align-items: center;
-  width: 512px;
+  width: 90vw;
+  max-width: 512px;
 
   .button {
     display: flex;

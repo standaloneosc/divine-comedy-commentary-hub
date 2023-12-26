@@ -30,5 +30,6 @@ export const theme = {
     commentModalWidth: '324px',
     commentModalHeight: '324px',
     tablet: '888px',
+    phone: '568px',
   }
 }

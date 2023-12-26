@@ -28,7 +28,7 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
   const showComments = { ...userComments }
   if (showComments && Object.keys(showComments)?.length) {
     Object.keys(showComments).forEach(k => {
-      if ((showComments[k]["private"] && showComments[k]["user"] !== user.uid) || showComments[k]["deleted"]) {
+      if ((showComments[k]["private"] && showComments[k]["user"] !== user?.uid) || showComments[k]["deleted"]) {
         delete showComments[k]
       }
     })
@@ -37,13 +37,13 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
   const deletedComments = { ...userComments }
   if (deletedComments && Object.keys(deletedComments)?.length) {
     Object.keys(deletedComments).forEach(k => {
-      if ((deletedComments[k]["private"] && deletedComments[k]["user"] !== user.uid) || !deletedComments[k]["deleted"]) {
+      if ((deletedComments[k]["private"] && deletedComments[k]["user"] !== user?.uid) || !deletedComments[k]["deleted"]) {
         delete deletedComments[k]
       }
     })
   }
 
-  const isOwnPage = !otherUserId || otherUserId === user.uid
+  const isOwnPage = !otherUserId || otherUserId === user?.uid
   
   useEffect(() => {
     if (!user) return

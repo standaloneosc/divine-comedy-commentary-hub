@@ -20,6 +20,11 @@ export const Container = styled.div`
   >* {
     opacity: ${props => props.visible ? 1 : 0};
   }
+
+  .error {
+    font-size: 14px;
+    font-weight: normal;
+  }
 `
 
 export const TextBox = styled.textarea`

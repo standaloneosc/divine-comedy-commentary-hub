@@ -27,7 +27,6 @@ export const ButtonContainer = styled.div`
   &:active {
     background: ${theme.colors.backgroundTanClick};
   }
-  
 
   ${props => props.primary && css`
     background-color: ${theme.colors.accentBrown};
@@ -38,6 +37,20 @@ export const ButtonContainer = styled.div`
 
     &:active {
       background-color: ${theme.colors.accentBrownHover};  
+    }
+  `}
+
+  ${props => props.disabled && css`
+    color: ${theme.colors.textGrayLight};
+    border-color: ${theme.colors.textGrayLight};
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: ${theme.colors.backgroundTan};  
+    }
+
+    &:active {
+      background-color: ${theme.colors.backgroundTan};  
     }
   `}
 `

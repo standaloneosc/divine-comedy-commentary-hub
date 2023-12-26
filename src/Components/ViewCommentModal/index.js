@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash, BiSolidEditAlt, BiReply } from "react-icons/bi"
+import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash, BiSolidEditAlt } from "react-icons/bi"
 import { RiReplyFill, RiReplyLine } from "react-icons/ri"
 import { useNavigate } from 'react-router-dom'
-
-import { Container, OuterContainer } from './styles'
-import { child, push, ref, serverTimestamp, set, update } from 'firebase/database'
-import { auth, db } from '../../App'
-import { getCommentUpdatesToMakeForRanges, getWordId } from '../../Utils/utility'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { PART_ABBREVIATIONS } from '../../Utils/constants'
+import { child, push, ref, serverTimestamp, set, update } from 'firebase/database'
+
+import { auth, db } from '../../App'
 import Button from '../Button'
 import Spacer from '../Spacer'
+
+import { PART_ABBREVIATIONS } from '../../Utils/constants'
+import { getCommentUpdatesToMakeForRanges, getWordId } from '../../Utils/utility'
+import { UserDataContext } from '../../Utils/context'
+
+import { Container, OuterContainer } from './styles'
 
 const  ViewCommentModal = ({
   comment, commentKey, close,
@@ -20,6 +23,7 @@ const  ViewCommentModal = ({
 }) => {
   const [user] = useAuthState(auth)
   const navigate = useNavigate()
+  const userData = useContext(UserDataContext)
 
   const [hasUpvoted, setHasUpvoted] = useState(userUpvotes && commentKey in userUpvotes && userUpvotes[commentKey])
   const [hasSaved, setHasSaved] = useState(userSaves && commentKey in userSaves && userSaves[commentKey])
@@ -106,7 +110,7 @@ const  ViewCommentModal = ({
   }
 
   const addReply = async () => {
-    if (!replyText.length) return
+    if (!replyText.length || userData?.demo) return
 
     setReplyLoading(true)
     const replyKey = push(child(ref(db), `comments/${commentKey}/replies`)).key
@@ -230,8 +234,9 @@ const  ViewCommentModal = ({
             <div className='editButtons'>
               <Button small text="Cancel" onClick={cancelReply} />
               <Spacer width="12px" />
-              <Button small text="Submit" onClick={addReply} loading={replyLoading} />
+              <Button small text="Submit" onClick={addReply} loading={replyLoading} disabled={userData?.demo} />
             </div>
+            {userData?.demo && <div className="error">You can not add replies with a guest/demo account.</div>}
           </div>
         </Container>
       )}
