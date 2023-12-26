@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash, BiSolidEditAlt, BiReply } from "react-icons/bi"
 import { RiReplyFill, RiReplyLine } from "react-icons/ri"
@@ -36,6 +36,13 @@ const  ViewCommentModal = ({
   const createdAtDate = format(createdAt, 'MM/dd/yy')
   const upvotes = comment["upvotes"] || 0
   const nameOrYou = comment["user"] === user.uid ? "You" : comment["name"] || "Dantista Anonimo"
+
+  useEffect(() => {
+    setReplyText("")
+    setEditText("")
+    setReplying(false)
+    setEditing(false)
+  }, [commentKey])
 
   const toggleUpvote = () => {
     set(ref(db, `user-upvotes/${user.uid}/${commentKey}`), !hasUpvoted)

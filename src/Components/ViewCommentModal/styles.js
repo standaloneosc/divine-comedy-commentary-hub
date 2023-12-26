@@ -82,13 +82,6 @@ export const Container = styled.div`
     }
   }
 
-  .reply {
-    border-bottom: 1px solid ${theme.colors.backgroundTanClick};
-    &:last-child {
-      border: none;
-    }
-  }
-
   .comment {
     padding: 12px;
     max-height: 324px;
@@ -139,7 +132,11 @@ export const Container = styled.div`
   }
 
   .reply {
-
+    border-bottom: 1px solid ${theme.colors.backgroundTanClick};
+    &:last-child {
+      border: none;
+    }
+    max-height: 132px;
   }
 
   .actions {
