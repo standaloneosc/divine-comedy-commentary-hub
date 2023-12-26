@@ -17,8 +17,8 @@ export const ButtonContainer = styled.div`
   font-weight: bold;
 
   background: ${theme.colors.backgroundTan};
-  color: ${theme.colors.backgroundBrown};
-  border: 2px solid ${theme.colors.backgroundBrown};
+  color: ${theme.colors.accentBrown};
+  border: 2px solid ${theme.colors.accentBrown};
 
   &:hover {
     background: ${theme.colors.backgroundTanHover};
@@ -30,14 +30,14 @@ export const ButtonContainer = styled.div`
   
 
   ${props => props.primary && css`
-    background-color: ${theme.colors.red};
+    background-color: ${theme.colors.accentBrown};
 
     &:hover {
-      background-color: ${theme.colors.redHover};  
+      background-color: ${theme.colors.accentBrownHover};  
     }
 
     &:active {
-      background-color: ${theme.colors.redClick};  
+      background-color: ${theme.colors.accentBrownHover};  
     }
   `}
 `

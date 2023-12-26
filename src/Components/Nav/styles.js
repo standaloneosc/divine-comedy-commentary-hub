@@ -6,7 +6,7 @@ export const NavContainer = styled.div`
   /* max-width: ${theme.sizes.pageMaxWidth}; */
   margin: 0 auto;
   background: ${theme.colors.backgroundTan};
-  border-bottom: 2px solid ${theme.colors.backgroundBrown};
+  border-bottom: 2px solid ${theme.colors.accentBrown};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,7 +51,7 @@ export const InnerContainer = styled.div`
     font-weight: bold;
     font-size: 36px;
     font-family: ${theme.fonts.almendra};
-    color: ${theme.colors.backgroundBrown};
+    color: ${theme.colors.accentBrown};
     cursor: pointer;
   }
 `
@@ -69,7 +69,7 @@ export const UserArea = styled.div`
   padding: 0 48px;
 
   .initials {
-    background: ${theme.colors.backgroundBrown};
+    background: ${theme.colors.accentBrown};
     color: white;
     width: 36px;
     height: 36px;
@@ -82,7 +82,7 @@ export const UserArea = styled.div`
     transition: 0.25s all;
 
     &:hover {
-      background: ${theme.colors.backgroundBrownHover};
+      background: ${theme.colors.accentBrownHover};
     }
   }
 `
@@ -97,14 +97,14 @@ export const UserDropdown = styled.div`
   border-radius: 8px;
   background: ${theme.colors.backgroundTan};
   box-shadow: 0 2px 5px rgba(50, 50, 50, 0.3);
-  border: 2px solid ${theme.colors.backgroundBrown};
+  border: 2px solid ${theme.colors.accentBrown};
   z-index: 10;
 
   >div {
     white-space: nowrap;
     padding: 8px 12px;
     cursor: pointer;
-    border-bottom: 2px solid ${theme.colors.backgroundBrown};
+    border-bottom: 2px solid ${theme.colors.accentBrown};
     transition: 0.25s all;
 
     &:last-child {

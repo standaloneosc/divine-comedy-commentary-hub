@@ -30,7 +30,7 @@ export const TextBox = styled.textarea`
   font-family: ${theme.fonts.garamond};
 
   background: ${theme.colors.backgroundTan};
-  border: 2px solid ${theme.colors.backgroundBrown};
+  border: 2px solid ${theme.colors.accentBrown};
   outline: none;
   color: ${theme.colors.offBlack};
   font-size: 14px;
@@ -41,7 +41,7 @@ export const RangeBox = styled.div`
   padding: 12px;
   border-radius: 8px;
   background: ${theme.colors.backgroundTan};
-  border: 2px solid ${theme.colors.backgroundBrown};
+  border: 2px solid ${theme.colors.accentBrown};
   transition: 0.25s all;
 
   height: 65%;
@@ -86,7 +86,7 @@ export const Checkbox = styled.div`
   padding: 6px 12px;
   width: 90%;
   border-radius: 8px;
-  border: 2px solid ${theme.colors.backgroundBrown};
+  border: 2px solid ${theme.colors.accentBrown};
   color: ${theme.colors.textGray};
   font-size: 12px;
 

@@ -13,7 +13,7 @@ const Button = ({ text, onClick, icon, primary, loading, small }) => {
       >
         <ThreeDots
           width="30"
-          color={theme.colors.backgroundBrown}
+          color={theme.colors.accentBrown}
         />
       </ButtonContainer>
     )

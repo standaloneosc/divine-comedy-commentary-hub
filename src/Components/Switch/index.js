@@ -15,11 +15,11 @@ const SwitchContainer = styled.label`
   }
 
   input:checked + .slider {
-    background-color: ${theme.colors.backgroundBrown};
+    background-color: ${theme.colors.accentBrown};
   }
 
   input:focus + .slider {
-    box-shadow: 0 0 1px ${theme.colors.backgroundBrown};
+    box-shadow: 0 0 1px ${theme.colors.accentBrown};
   }
 
   input:checked + .slider:before {

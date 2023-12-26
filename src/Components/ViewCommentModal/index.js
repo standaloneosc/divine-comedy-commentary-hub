@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
-import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash, BiSolidEditAlt } from "react-icons/bi"
+import { BiUpvote, BiSolidUpvote, BiStar, BiSolidStar, BiSolidXCircle, BiSolidTrash, BiSolidEditAlt, BiReply } from "react-icons/bi"
+import { RiReplyFill, RiReplyLine } from "react-icons/ri"
 import { useNavigate } from 'react-router-dom'
 
-import { Container } from './styles'
-import { ref, set, update } from 'firebase/database'
+import { Container, OuterContainer } from './styles'
+import { child, push, ref, serverTimestamp, set, update } from 'firebase/database'
 import { auth, db } from '../../App'
 import { getCommentUpdatesToMakeForRanges, getWordId } from '../../Utils/utility'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -26,6 +27,10 @@ const  ViewCommentModal = ({
   const [editing, setEditing] = useState(false)
   const [editText, setEditText] = useState(comment["comment"])
   const [editLoading, setEditLoading] = useState(false)
+
+  const [replying, setReplying] = useState(false)
+  const [replyText, setReplyText] = useState("")
+  const [replyLoading, setReplyLoading] = useState(false)
 
   const createdAt = comment["createdAt"] ? new Date(comment["createdAt"]) : new Date()
   const createdAtDate = format(createdAt, 'MM/dd/yy')
@@ -58,18 +63,18 @@ const  ViewCommentModal = ({
       })
   }
 
-  const deleteComment = () => {
+  const deleteComment = async () => {
     if (user.uid !== comment["user"]) return
 
     const keyAndSubfield = `${commentKey}/deleted`
     const updates = getCommentUpdatesToMakeForRanges(keyAndSubfield, user.uid, comment["ranges"], true)
-    update(ref(db), updates)
-      .then(() => {
-        if (close) close()
-      })
-      .catch(err => {
-        console.log("Error deleting post:", err)
-      })
+
+    try {
+      await update(ref(db), updates)
+      if (close) close()
+    } catch (err) {
+      console.log("Error deleting post:", err)
+    }
   }
 
   const editComment = async () => {
@@ -80,18 +85,46 @@ const  ViewCommentModal = ({
     const updates = getCommentUpdatesToMakeForRanges(keyAndSubfield, user.uid, comment["ranges"], editText)
 
     try {
-
+      await update(ref(db), updates)
+      setEditing(false)
     } catch (err) {
       console.log("Error editing comment:", err)
     }
-    await update(ref(db), updates)
     setEditLoading(false)
-    setEditing(false)
   }
 
   const cancelEditing = () => {
     setEditText(comment["comment"])
     setEditing(false)
+  }
+
+  const addReply = async () => {
+    if (!replyText.length) return
+
+    setReplyLoading(true)
+    const replyKey = push(child(ref(db), `comments/${commentKey}/replies`)).key
+    const keyAndSubfield = `${commentKey}/replies/${replyKey}`
+    const replyData = {
+      reply: replyText,
+      createdAt: serverTimestamp(),
+      user: user.uid,
+      name: user.displayName,
+    }
+    const updates = getCommentUpdatesToMakeForRanges(keyAndSubfield, comment["user"], comment["ranges"], replyData)
+
+    try {
+      await update(ref(db), updates)
+      setReplying(false)
+      setReplyText("")
+    } catch (err) {
+      console.log("Error adding reply:", err)
+    }
+    setReplyLoading(false)
+  }
+
+  const cancelReply = () => {
+    setReplying(false)
+    setReplyText("")
   }
 
   const clickCommentRange = (part, canto, startLine, startWord) => {
@@ -102,74 +135,121 @@ const  ViewCommentModal = ({
     }
   }
 
-  const clickUsername = () => {
-    if (comment["user"] === user.uid) {
+  const clickUsername = u => {
+    if (u === user.uid) {
       navigate("/comments")
     } else {
-      navigate(`/user/${comment["user"]}`)
+      navigate(`/user/${u}`)
     }
   }
 
   return (
-    <Container commentsPage={commentsPage}>
-      <div className="header">
-        <div className="ranges">
-          {comment["ranges"].map((r, idx) => {
-            const { part, canto, startLine, endLine, startWord } = r
-            const lines = startLine === endLine ? startLine : `${startLine}-${endLine}`
-            const comma = idx < comment["ranges"].length - 1? "," : ""
+    <OuterContainer>
+      <Container commentsPage={commentsPage}>
+        <div className="header">
+          <div className="ranges">
+            {comment["ranges"].map((r, idx) => {
+              const { part, canto, startLine, endLine, startWord } = r
+              const lines = startLine === endLine ? startLine : `${startLine}-${endLine}`
+              const comma = idx < comment["ranges"].length - 1? "," : ""
 
-            return (
-              <span onClick={() => clickCommentRange(part, canto, startLine, startWord)}>
-                {`${PART_ABBREVIATIONS[part]} ${canto}.${lines}${comma}`}
-              </span>
-            )
-          })}
+              return (
+                <span onClick={() => clickCommentRange(part, canto, startLine, startWord)} key={`range-${idx}`}>
+                  {`${PART_ABBREVIATIONS[part]} ${canto}.${lines}${comma}`}
+                </span>
+              )
+            })}
+          </div>
+          <div className="right">
+            <span className="date">{createdAtDate}</span>
+            {close && <BiSolidXCircle onClick={close} />}
+            {comment["deleted"] ? (
+              <>Deleted</>
+            ) : (commentsPage && comment["user"] === user.uid) && (
+              <>
+                <BiSolidEditAlt className="edit" onClick={() => setEditing(true)} />
+                <BiSolidTrash onClick={deleteComment} />
+              </>
+            )}
+          </div>
         </div>
-        <div className="right">
-          <span className="date">{createdAtDate}</span>
-          {close && <BiSolidXCircle onClick={close} />}
-          {comment["deleted"] ? (
-            <>Deleted</>
-          ) : (commentsPage && comment["user"] === user.uid) && (
-            <>
-              <BiSolidEditAlt className="edit" onClick={() => setEditing(true)} />
-              <BiSolidTrash onClick={deleteComment} />
-            </>
-          )}
+        <div className="comment">
+          <div className="name">
+            <div>
+              <span onClick={() => clickUsername(comment["user"])}>{nameOrYou}</span> 
+              {' '}commented
+            </div>
+          </div>
+          {editing 
+            ? <>
+                <textarea 
+                  value={editText}
+                  onChange={e => setEditText(e.target.value)}
+                />
+                <div className='editButtons'>
+                  <Button small text="Cancel" onClick={cancelEditing} />
+                  <Spacer width="12px" />
+                  <Button small text="Submit" onClick={editComment} loading={editLoading} />
+                </div>
+              </>
+            : comment["comment"]
+          }
         </div>
-      </div>
-      <div className="comment">
-        <div className="name">
-          <span onClick={clickUsername}>{nameOrYou}</span> 
-          {' '}commented
+        <div className="actions">
+          <div className="action" onClick={toggleUpvote}>
+            {comment["upvotes"] || 0}
+            {hasUpvoted ? <BiSolidUpvote /> : <BiUpvote />}
+          </div>
+          <div className="action" onClick={() => setReplying(!replying)}>
+            Reply
+            {replying ? <RiReplyFill /> : <RiReplyLine />}
+          </div>
+          <div className="action" onClick={toggleSave}>
+            Save
+            {hasSaved ? <BiSolidStar /> : <BiStar />}
+          </div>
         </div>
-        {editing 
-          ? <>
-              <textarea 
-                value={editText}
-                onChange={e => setEditText(e.target.value)}
-              />
-              <div className='editButtons'>
-                <Button small text="Cancel" onClick={cancelEditing} />
-                <Spacer width="12px" />
-                <Button small text="Submit" onClick={editComment} loading={editLoading} />
+      </Container>
+      {replying && (
+        <Container commentsPage={commentsPage}>
+          <div className='header'>
+            <div className='ranges'>Add a Reply</div>
+          </div>
+          <div className="comment">
+            <textarea 
+              value={replyText}
+              onChange={e => setReplyText(e.target.value)}
+            />
+            <div className='editButtons'>
+              <Button small text="Cancel" onClick={cancelReply} />
+              <Spacer width="12px" />
+              <Button small text="Submit" onClick={addReply} loading={editLoading} />
+            </div>
+          </div>
+        </Container>
+      )}
+      {comment?.replies && (
+        <Container commentsPage={commentsPage} className='replyBox'>
+          <div className='header'>
+            <div className='ranges'>Replies</div>
+          </div>
+          {Object.keys(comment.replies).map(k => (
+            <div className="comment reply" key={k}>
+              <div className="name">
+                <div>
+                  <span onClick={() => clickUsername(comment.replies[k].user)}>{comment.replies[k].name}</span> 
+                  {' '}replied
+                </div>
+                <div className="date">{format(new Date(comment.replies[k].createdAt), 'MM/dd/yy')}</div>
               </div>
-            </>
-          : comment["comment"]
-        }
-      </div>
-      <div className="actions">
-        <div className="action" onClick={toggleUpvote}>
-          {comment["upvotes"] || 0}
-          {hasUpvoted ? <BiSolidUpvote /> : <BiUpvote />}
-        </div>
-        <div className="action" onClick={toggleSave}>
-          Save
-          {hasSaved ? <BiSolidStar /> : <BiStar />}
-        </div>
-      </div>
-    </Container>
+              {comment.replies[k].reply}
+            </div>
+          ))}
+          
+      </Container>
+      )}
+      
+    </OuterContainer>
   )
 }
 

@@ -16,7 +16,7 @@ export const PartContainer = styled.div`
     font-size: 28px;
     margin-bottom: 12px;
     font-family: ${theme.fonts.almendra};
-    color: ${theme.colors.backgroundBrown};
+    color: ${theme.colors.accentBrown};
   }
 
   .list {

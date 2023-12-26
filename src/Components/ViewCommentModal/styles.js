@@ -1,14 +1,30 @@
 import styled, { css } from "styled-components"
 import { theme } from "../../theme"
 
+export const OuterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 324px;
+
+  .replyBox {
+    border-color: ${theme.colors.accentBrownLight};
+
+    .header {
+      background: ${theme.colors.accentBrownLight};
+    }
+  }
+`
+
 export const Container = styled.div`
   background: ${theme.colors.backgroundTan};
-  border: 2px solid ${theme.colors.backgroundBrown};
-  width: 324px;
+  border: 2px solid ${theme.colors.accentBrown};
+  width: 100%;
   border-radius: 8px;
   box-shadow: 0 10px 15px rgba(50, 50, 50, 0.3);
   text-align: left;
   font-size: 14px;
+  margin-bottom: 12px;
 
   ${props => props.commentsPage && css`
     box-shadow: none;
@@ -20,7 +36,7 @@ export const Container = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    background: ${theme.colors.backgroundBrown};
+    background: ${theme.colors.accentBrown};
     color: white;
     font-size: 14px;
 
@@ -43,7 +59,6 @@ export const Container = styled.div`
     }
 
     .right {
-      /* flex: 1; */
       color: #f2b679;
       display: flex;
       align-items: center;
@@ -67,6 +82,13 @@ export const Container = styled.div`
     }
   }
 
+  .reply {
+    border-bottom: 1px solid ${theme.colors.backgroundTanClick};
+    &:last-child {
+      border: none;
+    }
+  }
+
   .comment {
     padding: 12px;
     max-height: 324px;
@@ -82,6 +104,8 @@ export const Container = styled.div`
     .name {
       margin-bottom: 8px;
       font-weight: bold;
+      display: flex;
+      justify-content: space-between;
       
       span {
         cursor: pointer;
@@ -89,11 +113,16 @@ export const Container = styled.div`
           text-decoration: underline;
         }
       }
+
+      .date {
+        color: ${theme.colors.textGray};
+        font-weight: normal;
+      }
     }
 
     textarea {
       flex: 1;
-      border: 2px solid ${theme.colors.backgroundBrown};
+      border: 2px solid ${theme.colors.accentBrown};
       outline: none;
       border-radius: 8px;
       padding: 12px;
@@ -107,7 +136,11 @@ export const Container = styled.div`
       justify-content: center;
       margin-top: 12px;
     }
-}
+  }
+
+  .reply {
+
+  }
 
   .actions {
     display: flex;
@@ -116,7 +149,7 @@ export const Container = styled.div`
     padding: 4px 12px;
     font-size: 16px;
 
-    border-top: 2px solid ${theme.colors.backgroundBrown};
+    border-top: 2px solid ${theme.colors.accentBrown};
 
     .action {
       display: flex;

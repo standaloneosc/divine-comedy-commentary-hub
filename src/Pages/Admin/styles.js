@@ -13,7 +13,7 @@ export const Box = styled.div`
   align-items: center;
   padding: 18px 24px;
 
-  border: 2px solid ${theme.colors.backgroundBrown};
+  border: 2px solid ${theme.colors.accentBrown};
   border-radius: 8px;
   width: 324px;
 

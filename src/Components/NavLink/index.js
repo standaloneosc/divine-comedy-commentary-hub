@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { theme } from '../../theme'
 
 const LinkStyle = styled(Link)`
-  color: ${theme.colors.backgroundBrown};
+  color: ${theme.colors.accentBrown};
   transition: 0.25s;
 
   &:hover {

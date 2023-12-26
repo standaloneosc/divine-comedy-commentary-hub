@@ -13,7 +13,7 @@ export const LoginBox = styled.div`
   align-items: center;
   padding: 18px 24px;
 
-  border: 2px solid ${theme.colors.backgroundBrown};
+  border: 2px solid ${theme.colors.accentBrown};
   border-radius: 8px;
   width: 324px;
 
@@ -47,7 +47,7 @@ export const SelectGroup = styled.div`
     outline: none;
     box-shadow: none;
     -webkit-appearance: none;
-    border: 2px solid ${theme.colors.backgroundBrown};
+    border: 2px solid ${theme.colors.accentBrown};
     padding: 12px;
     border-radius: 8px;
     width: 222px;
@@ -59,7 +59,7 @@ export const SelectGroup = styled.div`
     position: absolute;
     right: 12px;
     top: 12px;
-    color: ${theme.colors.backgroundBrown};
+    color: ${theme.colors.accentBrown};
     pointer-events: none;
   }
 `

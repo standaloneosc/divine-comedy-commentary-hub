@@ -294,7 +294,6 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       }
     }
 
-    console.log('only:', onlyShowGroup)
     if (onlyShowGroup === true) {
       comments = comments.filter(c => c.group === userData.group)
     } else if (onlyShowGroup && onlyShowGroup !== SELECT_DEFAULT) {
