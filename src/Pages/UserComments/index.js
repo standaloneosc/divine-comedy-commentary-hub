@@ -54,6 +54,8 @@ const UserComments = ({ userUpvotes: currentUserUpvotes, userSaves: currentUserS
       if (snapshot.exists()) {
         const comments = snapshot.val()
         setUserComments(comments)
+      } else {
+        setUserComments(null)
       }
     })
 

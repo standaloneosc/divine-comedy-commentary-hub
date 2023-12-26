@@ -223,7 +223,7 @@ const  ViewCommentModal = ({
             <div className='editButtons'>
               <Button small text="Cancel" onClick={cancelReply} />
               <Spacer width="12px" />
-              <Button small text="Submit" onClick={addReply} loading={editLoading} />
+              <Button small text="Submit" onClick={addReply} loading={replyLoading} />
             </div>
           </div>
         </Container>
@@ -233,19 +233,23 @@ const  ViewCommentModal = ({
           <div className='header'>
             <div className='ranges'>Replies</div>
           </div>
-          {Object.keys(comment.replies).map(k => (
-            <div className="comment reply" key={k}>
-              <div className="name">
-                <div>
-                  <span onClick={() => clickUsername(comment.replies[k].user)}>{comment.replies[k].name}</span> 
-                  {' '}replied
+          {Object.keys(comment.replies).map(k => {
+            const reply = comment.replies[k]
+            const nameOrYou = reply.user === user.uid ? "You" : reply["name"] || "Dantista Anonimo"
+
+            return (
+              <div className="comment reply" key={k}>
+                <div className="name">
+                  <div>
+                    <span onClick={() => clickUsername(reply.user)}>{nameOrYou}</span> 
+                    {' '}replied
+                  </div>
+                  <div className="date">{format(new Date(reply.createdAt), 'MM/dd/yy')}</div>
                 </div>
-                <div className="date">{format(new Date(comment.replies[k].createdAt), 'MM/dd/yy')}</div>
+                {reply.reply}
               </div>
-              {comment.replies[k].reply}
-            </div>
-          ))}
-          
+            )
+          })}
       </Container>
       )}
       
