@@ -45,17 +45,27 @@ const Auth = () => {
     return <Navigate to="/" />
   }
 
-  const login = () => {
+  const loginDemo = async () => {
     setLoginLoading(true)
-    
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        setLoginLoading(false)
-      })
-      .catch(err => {
-        setLoginLoading(false)
-        setLoginError(getErrorCode(err.code))
-      })
+
+    try {
+      await signInWithEmailAndPassword(auth, "demo@dante.com", "password")
+    } catch (err) {
+      setLoginError(getErrorCode(err.code))
+    }
+    setLoginLoading(false)
+  }
+
+  const login = async () => {
+    setLoginLoading(true)
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+    } catch (err) {
+      setLoginError(getErrorCode(err.code))
+    }
+
+    setLoginLoading(false)
   }
 
   const signup = async () => {
@@ -156,9 +166,14 @@ const Auth = () => {
             onClick={signingUp ? signup : login}
           />
           <Spacer height="18px" />
-          <SwitchLoginSignup>
+          <SwitchLoginSignup bold>
             {signingUp ? <>Already have an account? <span onClick={switchLoginSignup}>Log in</span>.</>
             : <>Don't have an account yet? <span onClick={switchLoginSignup}>Sign up</span>.</>}
+          </SwitchLoginSignup>
+          <Spacer height="4px" />
+          <SwitchLoginSignup>
+            Or, <span onClick={loginDemo}>demo the site</span>. 
+            You won't be able to add comments or replies.
           </SwitchLoginSignup>
         </LoginBox>
       </Container>

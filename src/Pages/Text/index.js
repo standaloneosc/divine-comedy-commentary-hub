@@ -257,8 +257,6 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       [startWordNum, endWordNum] = [endWordNum, startWordNum]
     }
 
-    console.log(`Selected text: ${startLineNum}.${startWordNum} - ${endLineNum}.${endWordNum}`)
-
     if (isNaN(startLineNum) || isNaN(endLineNum) || isNaN(startWordNum) || isNaN(endWordNum)) {
       console.log("Got NaN, parent info:", sel)
       return

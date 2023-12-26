@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { theme } from "../../theme"
 
 export const Container = styled.div`
@@ -26,10 +26,14 @@ export const SwitchLoginSignup = styled.div`
   font-size: 12px;
 
   span {
-    margin-left: 4px;
+    margin-left: 2px;
     text-decoration: underline;
     cursor: pointer;
   }
+
+  ${props => props.bold && css`
+    font-weight: bold;
+  `}
 `
 
 export const Error = styled.div`
