@@ -84,6 +84,12 @@ const Auth = () => {
       return
     }
 
+    // Delete this check when we want to open up to public
+    if (userGroup === SELECT_DEFAULT) {
+      setSignupError("Please choose a group to join.")
+      return
+    }
+
     if (userGroup !== SELECT_DEFAULT && !groupCode) {
       setSignupError("Please enter your group's join code.")
       return
@@ -147,7 +153,7 @@ const Auth = () => {
             <>
             <SelectGroup notSelected={userGroup === SELECT_DEFAULT}>
               <select value={userGroup} onChange={e => setUserGroup(e.target.value)}>
-                <option default value={SELECT_DEFAULT}>Join a group (optional)</option>
+                <option default disabled value={SELECT_DEFAULT}>Choose a group</option>
                 {Object.keys(groups).map(k => (
                   <option value={k}>{groups[k]["name"]}</option>
                 ))}
@@ -157,7 +163,7 @@ const Auth = () => {
             <Spacer height="12px" />
             </>
           ) : null}
-          {signingUp && userGroup !== SELECT_DEFAULT ? (
+          {signingUp ? (
             <Input placeholder="Group code (6 letters)" value={groupCode} setValue={setGroupCode} upperCaseOnly maxLength={6} />
           ) : null}
           <Button
