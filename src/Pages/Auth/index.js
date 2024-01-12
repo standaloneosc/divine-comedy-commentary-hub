@@ -162,6 +162,16 @@ const Auth = () => {
             </SelectGroup>
             <Spacer height="12px" />
             </>
+          ) : signingUp ? (
+            <>
+            <SelectGroup notSelected={userGroup === SELECT_DEFAULT}>
+              <select value={userGroup}>
+                <option default disabled value={SELECT_DEFAULT}>Groups not loading, refresh page</option>
+              </select>
+              <PiCaretDownBold />
+            </SelectGroup>
+            <Spacer height="12px" />
+            </>
           ) : null}
           {signingUp ? (
             <Input placeholder="Group code (6 letters)" value={groupCode} setValue={setGroupCode} upperCaseOnly maxLength={6} />
