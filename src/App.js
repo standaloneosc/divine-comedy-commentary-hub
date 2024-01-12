@@ -9,6 +9,7 @@ import { XMLParser } from 'fast-xml-parser'
 import { initializeApp } from "firebase/app"
 import { getAuth } from 'firebase/auth'
 import { getDatabase, onValue, ref } from "firebase/database"
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"
 
 import Home from './Pages/Home'
 import Text from './Pages/Text'
@@ -38,6 +39,10 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getDatabase(app)
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6LdVZzspAAAAAHrMxWG5WPRYRgpRNUa5pyvmBUV2'),
+  isTokenAutoRefreshEnabled: true
+})
 
 const App = () => {
   const [user] = useAuthState(auth)

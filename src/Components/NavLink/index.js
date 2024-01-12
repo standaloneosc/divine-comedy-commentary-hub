@@ -8,7 +8,7 @@ const LinkStyle = styled(Link)`
   transition: 0.25s;
 
   &:hover {
-    color: ${theme.colors.orangeHover};
+    color: ${theme.colors.accentBrownHover};
   }
 `
 
