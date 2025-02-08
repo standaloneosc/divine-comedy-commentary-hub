@@ -292,7 +292,8 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
       }
     }
 
-    if (onlyShowGroup === true) {
+    // if (onlyShowGroup === true) {
+    if (userData?.groupName && userData?.group && !userData?.admin) {
       comments = comments.filter(c => c.group === userData.group)
     } else if (onlyShowGroup && onlyShowGroup !== SELECT_DEFAULT) {
       // Admin has selected a group to filter by
@@ -365,11 +366,14 @@ const Text = ({ part, commediaData, userUpvotes, userSaves }) => {
           )
           : userData?.groupName && userData?.group && !userData?.admin ? (
             <div className="groupToggle">
-              <Switch checked={onlyShowGroup} setChecked={setOnlyShowGroup} />
-              <Spacer width="8px" />
-              Only show comments from
-              <b>{userData.groupName}</b>
+              Viewing comments from <b>{userData.groupName}</b>
             </div>
+            // <div className="groupToggle">
+            //   <Switch checked={onlyShowGroup} setChecked={setOnlyShowGroup} />
+            //   <Spacer width="8px" />
+            //   Only show comments from
+            //   <b>{userData.groupName}</b>
+            // </div>
           ) : <div />}
         </div>
         <div className="body">
